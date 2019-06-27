@@ -1,20 +1,32 @@
 # AngularResource (WIP)
 Angular reactive/http/etc resource (AngularJS like)
 
-You can use it like Angular 1 resource, or like event driven library if you follow reactive way.
+You can use it like AngularJS resource, or like event driven library if you follow reactive way.
 E.g. you have chat app. So, you just add http methods for getting all messages and web-socket methods for others and it works in one stream! You also can use internal state of the resource (all or last page of chat messages in our example) and make reducer in the Redux style if you prefer this
 
 ## Example
+If you plan to use HTTP resource you should import Angular HttpClientModule or AngularResourceModule from oi-angular-resource
+
+app.module.ts
+```js
+import { AngularResourceModule } from 'oi-angular-resource';
+
+@NgModule({
+    ...
+    imports: [AngularResourceModule]
+})
+...
+```
 
 First you need to extend base reactiveResource by extra http, websockets and other methods what you need and adjust them by default values etc.
 
-api-resourse.ts
+api-resource.ts
 ```js
 
-import { ReactiveResource, StateConfig } from './reactive-resource';
-import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from './http-resource';
-import { WebSocketConfig, Open, Close, Send } from './web-socket-resource';
-import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from './local-storage-resource';
+import { ReactiveResource, StateConfig } from 'oi-angular-resource/core';
+import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from 'oi-angular-resource/http';
+import { WebSocketConfig, Open, Close, Send } from 'oi-angular-resource/web-socket';
+import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from 'oi-angular-resource/local-storage';
 
 @WebSocketConfig({
   url: 'wss://some-url',
@@ -55,13 +67,13 @@ export class ApiResourceExample extends ReactiveResource {
   removeFromLocalStorage = RemoveFromLocalStorage();
 }
 
-export * from './reactive-resource';
-export * from './http-resource';
-export * from './web-socket-resource';
-export * from './local-storage-resource';
+export * from 'oi-angular-resource/core';
+export * from 'oi-angular-resource/http';
+export * from 'oi-angular-resource/web-socket';
+export * from 'oi-angular-resource/local-storage';
 ```
 
-You can extend and adjust your resouce as many times as you want. New options will be merged
+You can extend and adjust your resource as many times as you want. New options will be merged
 
 current-user.ts
 ```js
@@ -91,7 +103,7 @@ export class CurrentUserResource extends ApiResourceExample {
 }
 ```
 
-Then you can use this resorce where you want (Promise, Observable, simple/reactive forms, any cases)
+Then you can use this resource where you want (Promise, Observable, simple/reactive forms, any cases)
 
 app.ts
 ```js

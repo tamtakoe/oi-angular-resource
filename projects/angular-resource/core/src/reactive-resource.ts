@@ -4,7 +4,7 @@ import { map, filter, pluck, tap } from 'rxjs/operators';
 // import { PartialObserver } from 'rxjs/Observer';
 // import { Subject } from 'rxjs/Subject';
 // import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Injector, Inject } from '@angular/core';
+import {Injector, Inject, Type} from '@angular/core';
 // import 'rxjs/add/operator/toPromise';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/add/operator/pluck';
@@ -14,12 +14,15 @@ import { Injector, Inject } from '@angular/core';
 // TODO implement clean state and unsubscribing
 
 export interface Action {
-  type: string, payload?: any, error?: any, meta?: any
+  type: string;
+  payload?: any;
+  error?: any;
+  meta?: any;
 }
 
 export function StateConfig(options: {initialState: any, updateState: (state: any, action: Action) => any}) {
   // return function (target: Type<Resource>) {
-  return (target) => {
+  return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $Some$Resource!` it means that you forgot to declare provider for Resource
@@ -83,8 +86,8 @@ export class ReactiveResource {
     }
 
     const observer: Observer<any> = {
-      next: payload => this.actions.next({type: type, payload: payload}),
-      error: error => this.actions.error({type: type, error: error}),
+      next: payload => this.actions.next({type, payload}),
+      error: error => this.actions.error({type, error}),
       complete: () => this.actions.complete(),
     };
     const observable = this.actions.pipe(

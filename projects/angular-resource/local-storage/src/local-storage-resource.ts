@@ -1,5 +1,5 @@
 import {Type} from '@angular/core';
-import {ReactiveResource} from '@oi-angular-resource/core';
+import {ReactiveResource} from 'oi-angular-resource/core';
 
 const Storage = localStorage;
 
@@ -50,7 +50,7 @@ export function RemoveFromLocalStorage(options?: {name?: string, transformReques
 }
 
 export function LocalStorageConfig(options?: {name?: string, transformRequest?: Function, transformResponse?: Function}) {
-  return (target: Type<ReactiveResource>) => {
+  return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $SomeLocalStorage$Resource!` it means that you need provider for Resource

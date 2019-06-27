@@ -1,6 +1,6 @@
 import {WebSocketMock} from './web-socket-mock';
 import {Type} from '@angular/core';
-import {ReactiveResource} from '@oi-angular-resource/core';
+import {ReactiveResource} from 'oi-angular-resource/core';
 
 const NUMBER_OF_ATTEMPTS = 10; // ~20-30 sec.
 
@@ -112,7 +112,7 @@ export function Send() {
 }
 
 export function WebSocketConfig(options?: {url?, protocols?, binaryType?, extensions?, protocol?, reconnect?, onMessageEventName?}) {
-  return (target: Type<ReactiveResource>) => {
+  return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $SomeWs$Resource!` it means that you need provider for Resource

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
 import { UrlTemplate } from './url-template';
-import { ReactiveResource } from '@oi-angular-resource/core';
+import { ReactiveResource } from 'oi-angular-resource/core';
 import { RequestCacheWithMap } from './request-cache';
 import { Type } from '@angular/core';
 import {Observable, of, throwError, NEVER} from 'rxjs';
@@ -217,7 +217,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 };
 
 export function HttpConfig(options: IHttpConfig) {
-  return function (target: Type<ReactiveResource>) {
+  return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $SomeHttp$Resource!` it means that you need provider for Resource

@@ -1,12 +1,13 @@
 {
-  "name": "@oi-angular-resource/core",
+  "name": "@oi-angular-resource/local-storage",
   "version": "0.0.1",
-  "description": "Angular core reactive resource",
+  "description": "Angular resource local storage adapter",
   "dependencies": {
     "tslib": "^1.9.0"
   },
   "peerDependencies": {
-    "@angular/common/http": "0.0.0-PLACEHOLDER"
+    "@angular/common/http": "0.0.0-PLACEHOLDER",
+    "oi-angular-resource/core": "0.0.0-PLACEHOLDER"
   },
   "repository": {
     "type": "git",
