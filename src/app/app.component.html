@@ -1,0 +1,28 @@
+<div style="text-align:center">
+  <h1>
+    Github users
+  </h1>
+</div>
+
+<table>
+  <tr>
+
+    <td style="vertical-align: top; min-width: 300px">
+      <ul>
+        <li *ngFor="let user of users">
+          <a href="#" (click)="showRepos(user.id)">{{user.login}}</a>
+        </li>
+      </ul>
+    </td>
+
+    <td style="vertical-align: top; min-width: 300px">
+      <ul>
+        <li *ngFor="let repo of repos">
+          <a [href]="repo.url">{{repo.name}}</a>
+        </li>
+      </ul>
+    </td>
+
+  </tr>
+</table>
+
