@@ -1,7 +1,7 @@
-import { ReactiveResource, StateConfig } from '../../../projects/angular-resource/src/lib/reactive-resource';
-import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '../../../projects/angular-resource/src/lib/http-resource';
-import { WebSocketConfig, Open, Close, Send } from '../../../projects/angular-resource/src/lib/web-socket-resource';
-import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from '../../../projects/angular-resource/src/lib/local-storage-resource';
+import { ReactiveResource, StateConfig } from '../../../projects/angular-resource/core/src/public_api';
+import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '../../../projects/angular-resource/http/src/public_api';
+import { WebSocketConfig, Open, Close, Send } from '../../../projects/angular-resource/web-socket/src/public_api';
+import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from '../../../projects/angular-resource/local-storage/src/public_api';
 // import config from '../config';
 import { environment as config } from '../../environments/environment';
 
@@ -78,6 +78,6 @@ export class GithubApi extends ReactiveResource {
   removeFromLocalStorage = RemoveFromLocalStorage();
 }
 
-export * from '../../../projects/angular-resource/src/lib/reactive-resource';
-export * from '../../../projects/angular-resource/src/lib/http-resource';
-export * from '../../../projects/angular-resource/src/lib/web-socket-resource';
+export * from '../../../projects/angular-resource/core/src/public_api';
+export * from '../../../projects/angular-resource/http/src/public_api';
+export * from '../../../projects/angular-resource/web-socket/src/public_api';

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
 import { UrlTemplate } from './url-template';
-import { ReactiveResource } from './reactive-resource';
+import { ReactiveResource } from '@oi-angular-resource/core';
 import { RequestCacheWithMap } from './request-cache';
 import { Type } from '@angular/core';
 import {Observable, of, throwError, NEVER} from 'rxjs';

@@ -1,6 +1,6 @@
 import {WebSocketMock} from './web-socket-mock';
 import {Type} from '@angular/core';
-import {ReactiveResource} from './reactive-resource';
+import {ReactiveResource} from '@oi-angular-resource/core';
 
 const NUMBER_OF_ATTEMPTS = 10; // ~20-30 sec.
 

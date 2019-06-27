@@ -1,5 +1,5 @@
 import {Type} from '@angular/core';
-import {ReactiveResource} from './reactive-resource';
+import {ReactiveResource} from '@oi-angular-resource/core';
 
 const Storage = localStorage;
 
