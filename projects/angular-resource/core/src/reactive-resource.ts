@@ -4,7 +4,7 @@ import { map, filter, pluck, tap } from 'rxjs/operators';
 // import { PartialObserver } from 'rxjs/Observer';
 // import { Subject } from 'rxjs/Subject';
 // import { ReplaySubject } from 'rxjs/ReplaySubject';
-import {Injector, Inject, Type} from '@angular/core';
+import { Injector, Inject, Type, Injectable } from '@angular/core';
 // import 'rxjs/add/operator/toPromise';
 // import 'rxjs/add/operator/map';
 // import 'rxjs/add/operator/pluck';
@@ -50,6 +50,7 @@ export function StateConfig(options: {initialState: any, updateState: (state: an
   };
 }
 
+@Injectable()
 export class ReactiveResource {
   actions: Subject<Action> = new Subject();
   errors: Observable<any> = this.actions.pipe(

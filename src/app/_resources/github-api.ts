@@ -4,6 +4,7 @@ import { WebSocketConfig, Open, Close, Send } from '../../../projects/angular-re
 import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from '../../../projects/angular-resource/local-storage/src/public_api';
 // import config from '../config';
 import { environment as config } from '../../environments/environment';
+import { Injectable } from "@angular/core";
 
 // import {ConfigService} from './config.service';
 
@@ -24,6 +25,7 @@ if (IbAuthCookie) {
 
 githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
 
+@Injectable()
 @WebSocketConfig({
   url: 'wss://ololo',
   protocols: [],
