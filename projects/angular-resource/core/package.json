@@ -1,12 +1,12 @@
 {
   "name": "@oi-angular-resource/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Angular core reactive resource",
   "dependencies": {
     "tslib": "^1.9.0"
   },
   "peerDependencies": {
-    "@angular/common/http": "0.0.0-PLACEHOLDER"
+    "@angular/core": ">=9.0.0"
   },
   "repository": {
     "type": "git",

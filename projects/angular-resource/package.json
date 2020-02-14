@@ -1,12 +1,11 @@
 {
   "name": "oi-angular-resource",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/tamtakoe/oi-angular-resource"
   },
   "peerDependencies": {
-    "@angular/common": "^7.2.0",
-    "@angular/core": "^7.2.0"
+    "@angular/core": ">=9.0.0"
   }
 }

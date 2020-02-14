@@ -6,8 +6,7 @@
     "tslib": "^1.9.0"
   },
   "peerDependencies": {
-    "@angular/common/http": "0.0.0-PLACEHOLDER",
-    "oi-angular-resource/core": "0.0.0-PLACEHOLDER"
+    "oi-angular-resource/core": "^0.0.0"
   },
   "repository": {
     "type": "git",

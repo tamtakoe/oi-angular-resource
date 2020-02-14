@@ -1,13 +1,13 @@
 {
   "name": "@oi-angular-resource/http",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Angular resource http adapter",
   "dependencies": {
     "tslib": "^1.9.0"
   },
   "peerDependencies": {
-    "@angular/common/http": "0.0.0-PLACEHOLDER",
-    "oi-angular-resource/core": "0.0.0-PLACEHOLDER"
+    "@angular/common": ">=9.0.0",
+    "oi-angular-resource/core": "^0.1.0"
   },
   "repository": {
     "type": "git",

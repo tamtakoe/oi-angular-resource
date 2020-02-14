@@ -59,7 +59,7 @@ export class ReactiveResource {
   );
   state: Observable<any>;
 
-  constructor(@Inject(Injector) protected _injector) {
+  constructor() {
     const stateSubject = new ReplaySubject(1);
 
     this.state = stateSubject.asObservable();
