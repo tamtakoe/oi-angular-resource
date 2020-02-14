@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
-import { UrlTemplate } from './url-template';
-import { ReactiveResource } from 'oi-angular-resource/core';
-import { RequestCacheWithMap } from './request-cache';
 import { Type } from '@angular/core';
-import {Observable, of, throwError, NEVER} from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase, XhrFactory, HttpXhrBackend } from '@angular/common/http';
+import { UrlTemplate } from './url-template';
+import { RequestCacheWithMap } from './request-cache';
+import { Observable, of, throwError, NEVER } from 'rxjs';
 import { map, tap, filter, catchError } from 'rxjs/operators';
 // import 'rxjs/add/operator/toPromise';
 // import 'rxjs/add/operator/map';
@@ -15,7 +14,7 @@ import { map, tap, filter, catchError } from 'rxjs/operators';
 // import 'rxjs/add/observable/from';
 
 function cleanObj(obj) {
-  for (let key in obj) {
+  for (const key in obj) {
     if (obj.hasOwnProperty(key) && obj[key] === undefined) {
       delete obj[key];
     }
@@ -36,11 +35,21 @@ function reqToRes(req, res) {
 }
 
 // Without Injector
-//
 // import { HttpXhrBackend, XhrFactory } from '@angular/common/http';
-// class BrowserXhr implements XhrFactory {
-//   constructor() {}
-//   build(): any { return <any>(new XMLHttpRequest()); }
+class BrowserXhr implements XhrFactory {
+  constructor() {}
+  build(): any { return <any>(new XMLHttpRequest()); }
+}
+const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
+
+// Get Injector from module https://stackoverflow.com/a/49508355/2422244
+// export let InjectorInstance: Injector;
+//
+// @NgModule(...)
+// export class AngularResourceModule {
+//   constructor(private injector: Injector) {
+//     InjectorInstance = this.injector;
+//   }
 // }
 // const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
 
@@ -173,8 +182,6 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     }
 
     // DO REQUEST
-    console.log(method, url, httpRequestInit);
-
     const requestObservable = (req) => {
       const cachedResponse = httpConfig.cache && cache.get(req, httpConfig.cache);
 
@@ -182,7 +189,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
         return of(cachedResponse);
       }
 
-      return mockRequest ? mockRequest(req) : this._http.request(req)
+      return mockRequest ? mockRequest(req) : http.request(req)
         .pipe(
           filter((event) => event instanceof HttpResponseBase),
           tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache)),
@@ -224,7 +231,7 @@ export function HttpConfig(options: IHttpConfig) {
     // which was extended from base Resource. You can add this to `providers` array of app.module
     const newConstructor: any = function $SomeHttp$Resource(...args) {
       const c: any = function childConstructor() {
-        return original.apply(this, arguments);
+        return new original(...arguments);
         // console.log(333, original);
         // return new original(...arguments);
       };
@@ -251,7 +258,6 @@ export function HttpConfig(options: IHttpConfig) {
         );
 
       instance._httpConfig = httpConfig;
-      instance._http = instance._injector.get(HttpClient);
 
       return instance;
     };

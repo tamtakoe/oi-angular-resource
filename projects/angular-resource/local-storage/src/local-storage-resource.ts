@@ -57,7 +57,7 @@ export function LocalStorageConfig(options?: {name?: string, transformRequest?: 
     // which was extended from base Resource. You can add this to `providers` array of app.module
     const newConstructor: any = function $SomeLocalStorage$Resource(...args) {
       const c: any = function childConstructor() {
-        return original.apply(this, arguments);
+        return new original(...arguments);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);

@@ -29,7 +29,7 @@ export function StateConfig(options: {initialState: any, updateState: (state: an
     // which was extended from ReactiveResource. You can add this to `providers` array of app.module or your component
     const newConstructor: any = function $Some$Resource(...args) {
       const c: any = function childConstructor() {
-        return original.apply(this, arguments);
+        return new original(...arguments);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);

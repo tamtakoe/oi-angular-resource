@@ -147,13 +147,13 @@
           "options": {
             "tsConfig": "projects/angular-resource/tsconfig.lib.json",
             "project": "projects/angular-resource/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "projects/angular-resource/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -177,5 +177,8 @@
       }
     }
   },
-  "defaultProject": "angular-resource"
+  "defaultProject": "angular-resource",
+  "cli": {
+    "analytics": "e7e2778b-8360-42e8-a012-1e8f7cc42526"
+  }
 }
