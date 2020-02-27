@@ -28,8 +28,8 @@ export function StateConfig(options: {initialState: any, updateState: (state: an
     // NOTE: If you see `Error: No provider for $Some$Resource!` it means that you forgot to declare provider for Resource
     // which was extended from ReactiveResource. You can add this to `providers` array of app.module or your component
     const newConstructor: any = function $Some$Resource(...args) {
-      const c: any = function childConstructor() {
-        return new original(...arguments);
+      const c: any = function childConstructor(...args2) {
+        return new original(...args2);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);

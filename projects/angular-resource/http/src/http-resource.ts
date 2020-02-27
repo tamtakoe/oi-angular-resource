@@ -230,10 +230,8 @@ export function HttpConfig(options: IHttpConfig) {
     // NOTE: If you see `Error: No provider for $SomeHttp$Resource!` it means that you need provider for Resource
     // which was extended from base Resource. You can add this to `providers` array of app.module
     const newConstructor: any = function $SomeHttp$Resource(...args) {
-      const c: any = function childConstructor() {
-        return new original(...arguments);
-        // console.log(333, original);
-        // return new original(...arguments);
+      const c: any = function childConstructor(...args2) {
+        return new original(...args2);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);
