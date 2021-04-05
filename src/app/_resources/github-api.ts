@@ -2,8 +2,12 @@ import { ReactiveResource, StateConfig } from '../../../projects/angular-resourc
 import {
   HttpConfig,
   HttpMethod,
-  Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '../../../projects/angular-resource/http/src/public_api';
-import { WebSocketConfig, Open, Close, Send } from '../../../projects/angular-resource/web-socket/src/public_api';
+  Get, Post, Put, Patch, Delete, Options, Head, Jsonp
+} from '../../../projects/angular-resource/http/src/public_api';
+import {
+  WebSocketConfig,
+  Open, Close, Send
+} from '../../../projects/angular-resource/web-socket/src/public_api';
 import {
   LocalStorageConfig,
   LoadFromLocalStorage,
