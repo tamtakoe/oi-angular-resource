@@ -1,7 +1,8 @@
 import { WebSocketMock } from './web-socket-mock';
 import { Type } from '@angular/core';
 
-export interface Action {
+// TODO use interfaces from one place
+export interface Action2 {
   type: string;
   payload?: any;
   error?: any;
@@ -24,7 +25,7 @@ function close(this: any) {
   this.actions.next({type: closeMethodName + ':start', payload: null, error: null, meta: this.$wsConfig});
 
   return new Promise((resolve, reject) => {
-    this.actions.do((action: Action) => {
+    this.actions.do((action: Action2) => {
       if (action.type === this.$wsCloseMethodName) {
         resolve(action.payload);
       }
