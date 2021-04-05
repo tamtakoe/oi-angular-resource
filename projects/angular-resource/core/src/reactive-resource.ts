@@ -20,25 +20,25 @@ export interface Action {
   meta?: any;
 }
 
-export function StateConfig(options: {initialState: any, updateState: (state: any, action: Action) => any}) {
+export function StateConfig(options: {initialState: any; updateState: (state: any, action: Action) => any}) {
   // return function (target: Type<Resource>) {
   return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $Some$Resource!` it means that you forgot to declare provider for Resource
     // which was extended from ReactiveResource. You can add this to `providers` array of app.module or your component
-    const newConstructor: any = function $Some$Resource(...args) {
-      const c: any = function childConstructor(...args2) {
+    const newConstructor: any = function $Some$Resource(...args: any[]) {
+      const c: any = function childConstructor(...args2: any[]) {
         return new original(...args2);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);
 
       // Set options
-      instance._state = options.initialState;
+      instance.$state = options.initialState;
 
       if (options.updateState) {
-        instance._updateState = options.updateState;
+        instance.$updateState = options.updateState;
       }
 
       return instance;
@@ -59,16 +59,19 @@ export class ReactiveResource {
   );
   state: Observable<any>;
 
+  private $state: any = null;
+  private $actions: any = {};
+
   constructor() {
     const stateSubject = new ReplaySubject(1);
 
     this.state = stateSubject.asObservable();
     this.actions.subscribe(action => {
-      const newState = this._updateState(this._state, action);
+      const newState = this.$updateState(this.$state, action);
 
       // Fire event if state is different
-      if (newState !== this._state) {
-        this._state = newState;
+      if (newState !== this.$state) {
+        this.$state = newState;
         stateSubject.next(newState);
       }
     });
@@ -82,8 +85,8 @@ export class ReactiveResource {
 
     // this.actions.filter(action => type === action.type).pluck('payload');
 
-    if (this._actions[type]) {
-      return this._actions[type];
+    if (this.$actions[type]) {
+      return this.$actions[type];
     }
 
     const observer: Observer<any> = {
@@ -96,16 +99,14 @@ export class ReactiveResource {
       pluck('payload')
     );
 
-    return this._actions[type] = Subject.create(observer, observable);
+    return this.$actions[type] = Subject.create(observer, observable);
   }
 
   getState() {
-    return this._state;
+    return this.$state;
   }
 
-  private _state: any = null;
-  private _updateState: Function = state => state; // (state, action) => !action.error && action.payload || state; if we need to save any action by default
-  private _actions: any = {};
+  private $updateState = (state: any, action: Action) => state; // (state, action) => !action.error && action.payload || state; if we need to save any action by default
 
   // Сделать пример с релейшнами
 
@@ -113,16 +114,16 @@ export class ReactiveResource {
   // state: ReplaySubject<any> = new ReplaySubject(1);
 
   // state: Observable<any> = Observable.from( this.actions
-  //   .map(action => this._updateState(this._state, action))
-  //   .filter(newState => newState !== this._state)
-  //   .do(newState => this._state = newState) );
+  //   .map(action => this.$updateState(this.$state, action))
+  //   .filter(newState => newState !== this.$state)
+  //   .do(newState => this.$state = newState) );
 
   // asObservable
   //Rx.Observable.from( source )
   // state: Observable<any> = this.actions.asObservable()
-  //   // .map(action => this._state = this._updateState(this._state, action))
-  //   .map(action => this._updateState(this._state, action))
-  //   // // .filter(newState => newState !== this._state ? (this._state = newState, true) : false);
-  //   .filter(newState => newState !== this._state)
-  //   .do(newState => this._state = newState);
+  //   // .map(action => this.$state = this.$updateState(this.$state, action))
+  //   .map(action => this.$updateState(this.$state, action))
+  //   // // .filter(newState => newState !== this.$state ? (this.$state = newState, true) : false);
+  //   .filter(newState => newState !== this.$state)
+  //   .do(newState => this.$state = newState);
 }

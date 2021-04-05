@@ -1,6 +1,7 @@
-function deepFind(obj, path) {
+/* eslint-disable */
+function deepFind(obj: any, path: string) {
   const paths = path.split('.');
-  let i, current = obj;
+  let i; let current = obj;
 
   for (i = 0; i < paths.length; ++i) {
     if (current[paths[i]] == undefined) {
@@ -11,6 +12,7 @@ function deepFind(obj, path) {
   }
   return current;
 }
+/* eslint-enable */
 
 /**
  * @whatItDoes Create url from url-template and variables
@@ -30,8 +32,9 @@ function deepFind(obj, path) {
  * @stable
  */
 export class UrlTemplate {
+  public placeholders: string[] = [];
+
   private placeholderRegexp = /([:])([^0-9?#&\/][^?#&\/]*)/g; // placeholder has js-variable shape with `:` before
-  public placeholders = [];
 
   constructor(
 
@@ -39,7 +42,7 @@ export class UrlTemplate {
     public template: string,
 
     /** The object with default values */
-    public defaultValues?: {}
+    public defaultValues?: any
   ) {
     if (template) {
       this.placeholders = (template.match(this.placeholderRegexp) || []).map(placeholder => placeholder.slice(1));
@@ -47,13 +50,14 @@ export class UrlTemplate {
   }
 
   /** Creates url by using stored template and values */
-  createUrl(values?: {}): string {
+  createUrl(values?: any): string {
     values = Object.assign({}, this.defaultValues, values);
 
     const segments = [];
-    const placeholders = [];
-    let p, s, i = 0, lastIndex = 0;
+    const placeholders: string[] = [];
+    let p; let s; let i = 0; let lastIndex = 0;
 
+    /* eslint-disable */
     while (p = this.placeholderRegexp.exec(this.template)) {
       s = this.template.substring(lastIndex, p.index);
       segments.push(s);
@@ -61,10 +65,11 @@ export class UrlTemplate {
       placeholders.push(p[2]);
       lastIndex = this.placeholderRegexp.lastIndex;
     }
+    /* eslint-enable */
 
     segments.push(this.template.substring(lastIndex));
 
-    const valuesArr = placeholders.map(placeholder => deepFind(values, placeholder))
+    const valuesArr = placeholders.map(placeholder => deepFind(values, placeholder));
 
     return segments.map(segment => typeof segment === 'number' ? valuesArr[segment] : segment).join('');
   }

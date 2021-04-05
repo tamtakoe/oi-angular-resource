@@ -8,21 +8,21 @@ import { ReposResource } from './_resources/repos.resource';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  users = [];
-  repos = [];
+  users: any[] = [];
+  repos: any[] = [];
 
   constructor(private usersResource: UsersResource, private reposResource: ReposResource) {
     this.loadUsers();
   }
 
   loadUsers() {
-    this.usersResource.query().then(users => {
+    this.usersResource.query().then((users: any[]) => {
       this.users = users;
     });
   }
 
-  showRepos(userId) {
-    this.reposResource.query({userId: userId}).then(repos => {
+  showRepos(userId: any) {
+    this.reposResource.query({userId}).then((repos: any[]) => {
       this.repos = repos;
     });
   }

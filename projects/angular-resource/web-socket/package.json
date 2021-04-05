@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Angular resource web-socket adapter",
   "dependencies": {
-    "tslib": "^1.9.0"
+    "tslib": "^2.0.0"
   },
   "peerDependencies": {
     "oi-angular-resource/core": "^0.0.0"

@@ -3,10 +3,10 @@
   "version": "0.1.1",
   "description": "Angular resource http adapter",
   "dependencies": {
-    "tslib": "^1.9.0"
+    "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": ">=9.0.0",
+    "@angular/common": ">=10.0.0",
     "oi-angular-resource/core": "^0.1.0"
   },
   "repository": {

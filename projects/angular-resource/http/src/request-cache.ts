@@ -21,8 +21,9 @@ export class RequestCacheWithMap implements RequestCache {
 
   constructor() { }
 
-  get(req: HttpRequest<any>, option?): HttpResponse<any> | undefined {
+  get(req: HttpRequest<any>, option?: string | boolean): HttpResponse<any> | undefined {
     option = typeof option === 'string' ? option : 'urlWithParams';
+    // @ts-ignore
     const url = req[option];
     const cached = this.cache.get(url);
 
@@ -37,13 +38,14 @@ export class RequestCacheWithMap implements RequestCache {
     return isExpired ? undefined : cached.response;
   }
 
-  put(req: HttpRequest<any>, response: HttpResponse<any>, option?): void {
+  put(req: HttpRequest<any>, response: HttpResponse<any>, option?: string | boolean): void {
     option = typeof option === 'string' ? option : 'urlWithParams';
+    // @ts-ignore
     const url = req[option];
     console.log(`Caching response from "${url}".`);
 
-    const entry = { url, response, lastRead: Date.now() };
-    this.cache.set(url, entry);
+    const item = { url, response, lastRead: Date.now() };
+    this.cache.set(url, item);
 
     // remove expired cache entries
     const expired = Date.now() - maxAge;

@@ -1,5 +1,16 @@
 import { Type } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase, XhrFactory, HttpXhrBackend } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpRequest,
+  HttpResponse,
+  HttpErrorResponse,
+  HttpResponseBase,
+  XhrFactory,
+  HttpXhrBackend,
+  HttpEvent
+} from '@angular/common/http';
 import { UrlTemplate } from './url-template';
 import { RequestCacheWithMap } from './request-cache';
 import { Observable, of, throwError, NEVER } from 'rxjs';
@@ -13,7 +24,7 @@ import { map, tap, filter, catchError } from 'rxjs/operators';
 // import 'rxjs/add/operator/share';
 // import 'rxjs/add/observable/from';
 
-function cleanObj(obj) {
+function cleanObj(obj: any) {
   for (const key in obj) {
     if (obj.hasOwnProperty(key) && obj[key] === undefined) {
       delete obj[key];
@@ -24,9 +35,11 @@ function cleanObj(obj) {
 }
 
 // More reliable way then obj instanceof Promise
-function isPromise(obj) { return Promise.resolve(obj) == obj }
+function isPromise(obj: any) {
+  return Promise.resolve(obj) === obj;
+}
 
-function reqToRes(req, res) {
+function reqToRes(req: any, res: any) {
   if (res instanceof HttpResponse) {
     return res;
   }
@@ -38,7 +51,9 @@ function reqToRes(req, res) {
 // import { HttpXhrBackend, XhrFactory } from '@angular/common/http';
 class BrowserXhr implements XhrFactory {
   constructor() {}
-  build(): any { return <any>(new XMLHttpRequest()); }
+  build(): any {
+    return (new XMLHttpRequest()) as any;
+  }
 }
 const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
 
@@ -74,7 +89,8 @@ interface IHttpConfig {
   responseType?: 'arraybuffer' | 'blob' | 'json' | 'text';
   transformRequest?: (request: Request, httpConfig: IHttpConfig) => any;
   transformResponse?: (response: any, httpConfig: IHttpConfig) => any;
-  transformErrorResponse?: (errorResponse: HttpErrorResponse, httpConfig: IHttpConfig) => HttpErrorResponse | never | any; // Return undefined or NEVER to prevent this event
+  transformErrorResponse?: (errorResponse: HttpErrorResponse, httpConfig: IHttpConfig) =>
+    HttpErrorResponse | never | any; // Return undefined or NEVER to prevent this event
   withCredentials?: boolean;
 }
 
@@ -83,33 +99,27 @@ const cache = new RequestCacheWithMap();
 /*
   method: HttpMethod<IRequestParams, IResponseModel> = Get();
 */
-export interface HttpMethod<RequestParams, ResponseModel> {
-  (params?: RequestParams): Promise<ResponseModel>; // |Observable<ResponseModel>;
-}
+export type HttpMethod<RequestParams, ResponseModel> = (params?: RequestParams) => Promise<ResponseModel>;
 
-export interface HttpMethodRequest<Params> {
-  (params?: Params): Promise<any>; // |Observable<any>;
-}
+export type HttpMethodRequest<Params> = (params?: Params) => Promise<any>;
 
-export interface HttpMethodResponse<Model> {
-  (params?: Model): Promise<any>; // |Observable<any>;
-}
+export type HttpMethodResponse<Model> = (params?: Model) => Promise<any>;
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
   method = method.toUpperCase();
 
-  let defaultUrlTemplate;
+  let defaultUrlTemplate: UrlTemplate;
 
   if (typeof defaultHttpConfig.url === 'string') {
     defaultUrlTemplate = new UrlTemplate(defaultHttpConfig.url);
   }
 
-  return function doRequest(params?, httpConfig: IHttpConfig = {}) {
-    httpConfig.headers = cleanObj(Object.assign({}, this._httpConfig.headers, defaultHttpConfig.headers));
-    httpConfig.params  = Object.assign({}, this._httpConfig.params,  defaultHttpConfig.params);
-    httpConfig = Object.assign({}, this._httpConfig, defaultHttpConfig, httpConfig);
+  return function doRequest(this: any, params?: any, httpConfig: IHttpConfig = {}) {
+    httpConfig.headers = cleanObj(Object.assign({}, this.$httpConfig.headers, defaultHttpConfig.headers));
+    httpConfig.params  = Object.assign({}, this.$httpConfig.params,  defaultHttpConfig.params);
+    httpConfig = Object.assign({}, this.$httpConfig, defaultHttpConfig, httpConfig);
 
     let body = httpConfig.body;
 
@@ -122,24 +132,24 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
     const httpHeaders = Object.keys(httpConfig.headers).reduce(
         (curr, next) => curr.set(next, httpConfig.headers[next]),
-        this._httpConfig.httpHeaders
+        this.$httpConfig.httpHeaders
       );
 
-    const urlTemplate = defaultUrlTemplate || this._httpConfig.urlTemplate;
+    const urlTemplate = defaultUrlTemplate || this.$httpConfig.urlTemplate;
     let rawUrl = urlTemplate.createUrl(Object.assign({}, params, typeof body === 'object' ? body : null));
 
-    if (this._httpConfig.noTrailingSlash) {
+    if (this.$httpConfig.noTrailingSlash) {
       rawUrl = rawUrl.replace(/\/$/, '');
     }
 
     const url = ABSOLUTE_URL_REGEXP.test(rawUrl) ? rawUrl : httpConfig.host + rawUrl;
-    const queryParams = {};
+    const queryParams: any = {};
 
 
 
     // Remove params which already included in the url placeholders
     // TODO Make way to resolve conflicts if we need to use placeholders and query variable with one name
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key: string) => {
       if (!urlTemplate.placeholders.includes(key)) {
         queryParams[key] = params[key];
       }
@@ -148,7 +158,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     const parameters: HttpParams = Object.keys(queryParams || {})
       .reduce(
         (curr, next) => curr.set(next, queryParams[next]),
-        this._httpConfig.httpParams
+        this.$httpConfig.httpParams
       );
 
     const httpRequestInit = {
@@ -164,15 +174,15 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
     this.actions.next({type: resourceMethodName + ':start', payload: body, error: null, meta: httpConfig});
 
-    let mockRequest;
+    let mockRequest: any;
     const httpRequest = body ? new HttpRequest(method, url, body, httpRequestInit) : new HttpRequest(method, url, httpRequestInit);
 
     if (httpConfig.mock) {
-      mockRequest = (req) => {
-        const mockData = httpConfig.mock(req, httpConfig);
+      mockRequest = (req: any) => {
+        const mockData = httpConfig.mock && httpConfig.mock(req, httpConfig);
         console.warn(`Used mock for ${method.toUpperCase()} ${url}`, mockData);
 
-        return isPromise(mockData) ? of(mockData.then(data => reqToRes(httpRequest, data))) : new Observable(observer => {
+        return isPromise(mockData) ? of(mockData.then((data: any) => reqToRes(httpRequest, data))) : new Observable(observer => {
           setTimeout(() => {
             observer.next(reqToRes(httpRequest, mockData));
             observer.complete();
@@ -182,7 +192,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     }
 
     // DO REQUEST
-    const requestObservable = (req) => {
+    const requestObservable = (req: HttpRequest<any>) => {
       const cachedResponse = httpConfig.cache && cache.get(req, httpConfig.cache);
 
       if (cachedResponse) {
@@ -191,15 +201,15 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
       return mockRequest ? mockRequest(req) : http.request(req)
         .pipe(
-          filter((event) => event instanceof HttpResponseBase),
+          filter((event: any) => event instanceof HttpResponseBase),
           tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache)),
         );
     };
 
     const transformedRequestObservable = requestObservable(httpRequest).pipe(
-      map((response: HttpResponse<any>) => httpConfig.transformResponse(response.body, httpConfig)),
+      map((response: HttpResponse<any>) => httpConfig.transformResponse && httpConfig.transformResponse(response.body, httpConfig)),
       catchError((response: HttpErrorResponse) => {
-        const handledResponse = httpConfig.transformErrorResponse(response, httpConfig);
+        const handledResponse = httpConfig.transformErrorResponse && httpConfig.transformErrorResponse(response, httpConfig);
 
         if (handledResponse instanceof HttpErrorResponse) {
           return throwError(handledResponse);
@@ -215,7 +225,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
         this.actions.next({type: resourceMethodName, payload: data, error: null, meta: httpConfig});
 
       }, error => {
-        this.actions.next({type: resourceMethodName, payload: null, error: error, meta: httpConfig});
+        this.actions.next({type: resourceMethodName, payload: null, error, meta: httpConfig});
       })
     );
 
@@ -229,8 +239,8 @@ export function HttpConfig(options: IHttpConfig) {
 
     // NOTE: If you see `Error: No provider for $SomeHttp$Resource!` it means that you need provider for Resource
     // which was extended from base Resource. You can add this to `providers` array of app.module
-    const newConstructor: any = function $SomeHttp$Resource(...args) {
-      const c: any = function childConstructor(...args2) {
+    const newConstructor: any = function $SomeHttp$Resource(...args: any[]) {
+      const c: any = function childConstructor(...args2: any[]) {
         return new original(...args2);
       };
       c.prototype = Object.create(original.prototype);
@@ -240,10 +250,10 @@ export function HttpConfig(options: IHttpConfig) {
       const httpConfig = Object.assign({
         httpHeaders: new HttpHeaders(),
         httpParams: new HttpParams(),
-        transformRequest: req => req,
-        transformResponse: res => res,
-        transformErrorResponse: res => res,
-      }, instance._httpConfig, options);
+        transformRequest: (req: any) => req,
+        transformResponse: (res: any) => res,
+        transformErrorResponse: (res: any) => res,
+      }, instance.$httpConfig, options);
 
       httpConfig.urlTemplate = new UrlTemplate(httpConfig.url);
       httpConfig.httpHeaders = Object.keys(httpConfig.headers || {}).reduce(
@@ -255,7 +265,7 @@ export function HttpConfig(options: IHttpConfig) {
           httpConfig.httpParams
         );
 
-      instance._httpConfig = httpConfig;
+      instance.$httpConfig = httpConfig;
 
       return instance;
     };

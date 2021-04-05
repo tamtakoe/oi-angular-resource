@@ -1,51 +1,65 @@
-import {WebSocketMock} from './web-socket-mock';
-import {Type} from '@angular/core';
-import {ReactiveResource} from 'oi-angular-resource/core';
+import { WebSocketMock } from './web-socket-mock';
+import { Type } from '@angular/core';
 
+export interface Action {
+  type: string;
+  payload?: any;
+  error?: any;
+  meta?: any;
+}
+export interface IWebSocketConfig {
+  url?: any;
+  protocols?: any;
+  binaryType?: any;
+  extensions?: any;
+  protocol?: any;
+  reconnect?: any;
+  onMessageEventName?: any;
+}
 const NUMBER_OF_ATTEMPTS = 10; // ~20-30 sec.
 
-function close() {
+function close(this: any) {
   const closeMethodName = Object.keys(this).find(methodName => this[methodName] === close);
-  this._ws.close();
-  this.actions.next({type: closeMethodName + ':start', payload: null, error: null, meta: this._wsConfig});
+  this.$ws.close();
+  this.actions.next({type: closeMethodName + ':start', payload: null, error: null, meta: this.$wsConfig});
 
   return new Promise((resolve, reject) => {
-    this.actions.do(action => {
-      if (action.type === this._wsCloseMethodName) {
+    this.actions.do((action: Action) => {
+      if (action.type === this.$wsCloseMethodName) {
         resolve(action.payload);
       }
-    })
+    });
   });
 }
 
-function send(data) {
+function send(this: any, data: any) {
   const sendMethodName = Object.keys(this).find(methodName => this[methodName] === send);
 
-  this.actions.next({type: sendMethodName + ':start', payload: data, error: null, meta: this._wsConfig});
+  this.actions.next({type: sendMethodName + ':start', payload: data, error: null, meta: this.$wsConfig});
 
   try {
-    this._ws.send(data);
-    this.actions.next({type: sendMethodName, payload: data, error: null, meta: this._wsConfig});
+    this.$ws.send(data);
+    this.actions.next({type: sendMethodName, payload: data, error: null, meta: this.$wsConfig});
 
   } catch (error) {
-    this.actions.next({type: sendMethodName, payload: null, error: error, meta: this._wsConfig});
+    this.actions.next({type: sendMethodName, payload: null, error, meta: this.$wsConfig});
   }
 
-  return Promise.resolve(data)
+  return Promise.resolve(data);
 }
 
 //TODO Check tha we have one ws instance for our app!
-export function Open(options?) {
+export function Open(options?: undefined) {
   let reconnectCount = 0;
 
-  return function open() {
-    if (this._ws) {
-      return Promise.resolve(this._ws)
+  return function open(this: any) {
+    if (this.$ws) {
+      return Promise.resolve(this.$ws);
     }
 
-    const wsConfig = this._wsConfig = Object.assign(this._wsConfig, options);
+    const wsConfig = this.$wsConfig = Object.assign(this.$wsConfig, options);
 
-    let ws = this._ws = new WebSocketMock(wsConfig.url, wsConfig.protocols);
+    let ws = this.$ws = new WebSocketMock(wsConfig.url, wsConfig.protocols);
 
     // wsConfig.ws = ws;
     wsConfig.reconnect = wsConfig.reconnect === true ? NUMBER_OF_ATTEMPTS : wsConfig.reconnect;
@@ -71,20 +85,21 @@ export function Open(options?) {
       ws.onopen = () => {
         resolve(ws);
         reconnectCount = 0;
-        this.actions.next({type: openMethodName, payload: null, error: null, meta: wsConfig})
+        this.actions.next({type: openMethodName, payload: null, error: null, meta: wsConfig});
       };
 
       ws.onmessage = event => {
-        this.actions.next({type: wsConfig.onMessageEventName, payload: event, error: null, meta: wsConfig})
+        this.actions.next({type: wsConfig.onMessageEventName, payload: event, error: null, meta: wsConfig});
       };
 
       ws.onerror = error => {
-        this.actions.next({type: wsConfig.onMessageEventName, payload: null, error: error, meta: wsConfig})
+        this.actions.next({type: wsConfig.onMessageEventName, payload: null, error, meta: wsConfig});
       };
 
       ws.onclose = event => {
         console.log('THIS', this, closeMethodName);
-        ws = this._ws = null;
+        // @ts-ignore
+        ws = this.$ws = null;
         reject(event);
         this.actions.next({type: closeMethodName, payload: event, error: null, meta: wsConfig});
 
@@ -111,21 +126,21 @@ export function Send() {
   return send;
 }
 
-export function WebSocketConfig(options?: {url?, protocols?, binaryType?, extensions?, protocol?, reconnect?, onMessageEventName?}) {
+export function WebSocketConfig(options?: IWebSocketConfig) {
   return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $SomeWs$Resource!` it means that you need provider for Resource
     // which was extended from base Resource. You can add this to `providers` array of app.module
-    const newConstructor: any = function $SomeWs$Resource(...args) {
-      const c: any = function childConstructor(...args2) {
+    const newConstructor: any = function $SomeWs$Resource(...args: any[]) {
+      const c: any = function childConstructor(...args2: any[]) {
         return new original(...args2);
       };
       c.prototype = Object.create(original.prototype);
       const instance = new c(...args);
 
       // Set options
-      instance._wsConfig = Object.assign({onMessageEventName: 'message'}, instance._wsConfig, options);
+      instance.$wsConfig = Object.assign({onMessageEventName: 'message'}, instance.$wsConfig, options);
 
       return instance;
     };

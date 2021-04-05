@@ -1,56 +1,54 @@
 export class WebSocketMock {
-  private _url;
-  private _intervalId;
-  private _errorCount = 0;
-
-  url;
-  protocols;
-
-  bufferedAmount;
+  url: string | undefined;
+  protocols: string[] | undefined;
   readyState = 0;
-  binaryType;
-  extensions;
-  protocol;
+  binaryType: any;
+  extensions: any[] | undefined;
+  protocol: string | undefined;
 
-  constructor(url, protocols?) {
-    this._url = url;
+  private $url;
+  private $intervalId;
+  private $errorCount = 0;
+
+  constructor(url: string, protocols?: string[]) {
+    this.$url = url;
 
     setTimeout(() => {
       this.readyState = 1;
       this.onopen();
     }, 200);
 
-    this._intervalId = setInterval(() => {
-      if (this._errorCount < 5) {
-        this._errorCount++;
+    this.$intervalId = setInterval(() => {
+      if (this.$errorCount < 5) {
+        this.$errorCount++;
 
         this.onmessage({
           data: Math.random()
-        })
+        });
 
       } else {
-        this._errorCount = 0;
+        this.$errorCount = 0;
 
         this.onerror({
           message: 'Error ' + Math.random()
-        })
+        });
       }
 
-    }, 1000)
+    }, 1000);
   }
 
   onopen() {}
 
-  onclose(event) {};
+  onclose(event: any) {};
 
-  onmessage(event) {};
+  onmessage(event: any) {};
 
-  onerror(error) {};
+  onerror(error: any) {};
 
   close() {
     this.readyState = 2;
     setTimeout(() => {
-      clearInterval(this._intervalId);
+      clearInterval(this.$intervalId);
 
       this.readyState = 3;
       this.onclose({
@@ -61,9 +59,9 @@ export class WebSocketMock {
     }, 50);
   }
 
-  send(data) {
+  send(data: any) {
     if (this.readyState !== 1) {
-      throw new Error('VM421:2 WebSocket is already in CLOSING or CLOSED state.')
+      throw new Error('VM421:2 WebSocket is already in CLOSING or CLOSED state.');
     }
 
     setTimeout(() => {

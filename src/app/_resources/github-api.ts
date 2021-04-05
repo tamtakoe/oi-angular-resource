@@ -1,10 +1,18 @@
 import { ReactiveResource, StateConfig } from '../../../projects/angular-resource/core/src/public_api';
-import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '../../../projects/angular-resource/http/src/public_api';
+import {
+  HttpConfig,
+  HttpMethod,
+  Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '../../../projects/angular-resource/http/src/public_api';
 import { WebSocketConfig, Open, Close, Send } from '../../../projects/angular-resource/web-socket/src/public_api';
-import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from '../../../projects/angular-resource/local-storage/src/public_api';
+import {
+  LocalStorageConfig,
+  LoadFromLocalStorage,
+  SaveToLocalStorage,
+  RemoveFromLocalStorage
+} from '../../../projects/angular-resource/local-storage/src/public_api';
 // import config from '../config';
 import { environment as config } from '../../environments/environment';
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 // import {ConfigService} from './config.service';
 
@@ -43,7 +51,7 @@ githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
     if (response && options.isArray) {
       newResponse = Array.isArray(response.data) ? response.data : [];
 
-      for (let key in response) {
+      for (const key in response) {
         if (key !== 'data' && response.hasOwnProperty(key)) {
           newResponse[key] = response[key];
         }
