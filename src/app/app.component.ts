@@ -8,11 +8,12 @@ import { ReposResource } from './_resources/repos.resource';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  title = 'Github users';
   users: any[] = [];
   repos: any[] = [];
 
   constructor(private usersResource: UsersResource, private reposResource: ReposResource) {
-    this.loadUsers();
+    // this.loadUsers();
   }
 
   loadUsers() {

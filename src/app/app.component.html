@@ -1,11 +1,13 @@
 <div style="text-align:center">
   <h1>
-    Github users
+    {{ title }}
   </h1>
 </div>
 
 <table>
   <tr>
+
+    <button (click)="loadUsers()">Load users</button>
 
     <td style="vertical-align: top; min-width: 300px">
       <ul>

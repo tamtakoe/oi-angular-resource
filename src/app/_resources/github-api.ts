@@ -74,7 +74,7 @@ githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
 export class GithubApi extends ReactiveResource {
   // Http methods
   // query: HttpMethod<{limit?: number}, [{id, type}]>   = Get({isArray: true});
-  query   = Get({isArray: true});
+  query   = Get({ isArray: true });
   get     = Get();
   create  = Post();
   update  = Patch();

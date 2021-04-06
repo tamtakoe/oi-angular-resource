@@ -1,4 +1,5 @@
 import { Observable, Observer, Subject, ReplaySubject } from 'rxjs';
+import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { map, filter, pluck, tap } from 'rxjs/operators';
 // import { Observer } from 'rxjs/Observer';
 // import { PartialObserver } from 'rxjs/Observer';
@@ -99,7 +100,7 @@ export class ReactiveResource {
       pluck('payload')
     );
 
-    return this.$actions[type] = Subject.create(observer, observable);
+    return this.$actions[type] = new AnonymousSubject<Action>(observer, observable);
   }
 
   getState() {

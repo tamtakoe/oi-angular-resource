@@ -13,16 +13,8 @@ import {
 } from '@angular/common/http';
 import { UrlTemplate } from './url-template';
 import { RequestCacheWithMap } from './request-cache';
-import { Observable, of, throwError, NEVER } from 'rxjs';
-import { map, tap, filter, catchError } from 'rxjs/operators';
-// import 'rxjs/add/operator/toPromise';
-// import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/do';
-//
-// import 'rxjs/add/operator/take';
-// import 'rxjs/add/operator/defaultIfEmpty';
-// import 'rxjs/add/operator/share';
-// import 'rxjs/add/observable/from';
+import { Observable, of, throwError, NEVER, Subject} from 'rxjs';
+import { map, tap, filter, catchError, takeUntil } from 'rxjs/operators';
 
 function cleanObj(obj: any) {
   for (const key in obj) {
@@ -69,21 +61,21 @@ const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
 // const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
 
 interface IHttpConfig {
-  body?: any;
+  body?: any; // Request body
   hasBody?: boolean;
   customType?: string; // Reserved for user options //new
   isArray?: boolean; // new
   mock?: (req: Request, httpConfig: IHttpConfig) => any; // new
-  cache?: boolean | string; // new
+  cache?: boolean | string; // new // Cache response //TODO implement ttl
   url?: string;
   host?: string;
-  headers?: any;
+  headers?: { [key: string]: string | string[] }; // Headers
   // observe?: any; // HttpObserve // Read more
   serializeBody?: any; // Read more
   detectContentTypeHeader?: any; // Read more
   clone?: any; // Read more
-  observable?: boolean; // new
-  params?: any;
+  observable?: boolean; // new // Response is Observable
+  params?: any; // Query params or template params or body
   noTrailingSlash?: boolean;
   reportProgress?: boolean;
   responseType?: 'arraybuffer' | 'blob' | 'json' | 'text';
@@ -92,6 +84,7 @@ interface IHttpConfig {
   transformErrorResponse?: (errorResponse: HttpErrorResponse, httpConfig: IHttpConfig) =>
     HttpErrorResponse | never | any; // Return undefined or NEVER to prevent this event
   withCredentials?: boolean;
+  cancelDuplicates?: boolean; // Cancel previous duplicate requests
 }
 
 const cache = new RequestCacheWithMap();
@@ -106,6 +99,7 @@ export type HttpMethodRequest<Params> = (params?: Params) => Promise<any>;
 export type HttpMethodResponse<Model> = (params?: Model) => Promise<any>;
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^(?:[a-z]+:)?//', 'i');
+const requestQueue = new Map();
 
 const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
   method = method.toUpperCase();
@@ -117,8 +111,10 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
   }
 
   return function doRequest(this: any, params?: any, httpConfig: IHttpConfig = {}) {
-    httpConfig.headers = cleanObj(Object.assign({}, this.$httpConfig.headers, defaultHttpConfig.headers));
-    httpConfig.params  = Object.assign({}, this.$httpConfig.params,  defaultHttpConfig.params);
+    const headers = httpConfig.headers =
+      cleanObj(Object.assign({}, this.$httpConfig.headers, defaultHttpConfig.headers, httpConfig.headers));
+
+    httpConfig.params = Object.assign({}, this.$httpConfig.params,  defaultHttpConfig.params);
     httpConfig = Object.assign({}, this.$httpConfig, defaultHttpConfig, httpConfig);
 
     let body = httpConfig.body;
@@ -130,11 +126,6 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
     params = cleanObj(Object.assign(httpConfig.params, params));
 
-    const httpHeaders = Object.keys(httpConfig.headers).reduce(
-        (curr, next) => curr.set(next, httpConfig.headers[next]),
-        this.$httpConfig.httpHeaders
-      );
-
     const urlTemplate = defaultUrlTemplate || this.$httpConfig.urlTemplate;
     let rawUrl = urlTemplate.createUrl(Object.assign({}, params, typeof body === 'object' ? body : null));
 
@@ -143,9 +134,15 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     }
 
     const url = ABSOLUTE_URL_REGEXP.test(rawUrl) ? rawUrl : httpConfig.host + rawUrl;
+
+    const requestId = [method, url, JSON.stringify(headers), JSON.stringify(body)].join('&');
+
+    const httpHeaders = Object.keys(headers).reduce(
+      (curr, next) => curr.set(next, headers[next]),
+      this.$httpConfig.httpHeaders
+    );
+
     const queryParams: any = {};
-
-
 
     // Remove params which already included in the url placeholders
     // TODO Make way to resolve conflicts if we need to use placeholders and query variable with one name
@@ -172,6 +169,16 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
     const resourceMethodName = Object.keys(this).find(methodName => this[methodName] === doRequest);
 
+    const cancelRequest = (reqId: string) => {
+      const unsubscribeStream = requestQueue.get(reqId);
+
+      if (unsubscribeStream) {
+        unsubscribeStream.next();
+        unsubscribeStream.complete();
+        this.actions.next({type: resourceMethodName + ':cancel', payload: body, error: null, meta: httpConfig});
+      }
+    };
+
     this.actions.next({type: resourceMethodName + ':start', payload: body, error: null, meta: httpConfig});
 
     let mockRequest: any;
@@ -191,7 +198,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
       };
     }
 
-    // DO REQUEST
+    // Internal request wrapper
     const requestObservable = (req: HttpRequest<any>) => {
       const cachedResponse = httpConfig.cache && cache.get(req, httpConfig.cache);
 
@@ -199,13 +206,23 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
         return of(cachedResponse);
       }
 
+      // Any event in cancelStream will cancel this request
+      const cancelStream = new Subject();
+
+      if (httpConfig.cancelDuplicates) {
+        cancelRequest(requestId);
+        requestQueue.set(requestId, cancelStream);
+      }
+
       return mockRequest ? mockRequest(req) : http.request(req)
         .pipe(
+          takeUntil(cancelStream),
           filter((event: any) => event instanceof HttpResponseBase),
           tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache)),
         );
     };
 
+    // Do request
     const transformedRequestObservable = requestObservable(httpRequest).pipe(
       map((response: HttpResponse<any>) => httpConfig.transformResponse && httpConfig.transformResponse(response.body, httpConfig)),
       catchError((response: HttpErrorResponse) => {
@@ -222,10 +239,12 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
         return of(handledResponse);
       }),
       tap(data => {
-        this.actions.next({type: resourceMethodName, payload: data, error: null, meta: httpConfig});
+        requestQueue.delete(requestId);
+        this.actions.next({ type: resourceMethodName, payload: data, error: null, meta: httpConfig });
 
       }, error => {
-        this.actions.next({type: resourceMethodName, payload: null, error, meta: httpConfig});
+        requestQueue.delete(requestId);
+        this.actions.next({ type: resourceMethodName, payload: null, error, meta: httpConfig });
       })
     );
 

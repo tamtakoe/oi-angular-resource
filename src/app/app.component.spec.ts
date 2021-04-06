@@ -1,31 +1,42 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { AngularResourceModule } from '../../projects/angular-resource/src/lib/angular-resource.module';
+import {UsersResource} from './_resources/users.resource';
+import {ReposResource} from './_resources/repos.resource';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule, AngularResourceModule
+      ],
+      providers: [
+        UsersResource,
+        ReposResource
+      ],
       declarations: [
         AppComponent
       ],
     }).compileComponents();
-  }));
+  });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
+    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'oi-angular-resource'`, () => {
+  it(`should have as title 'Github users`, () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('oi-angular-resource');
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('Github users');
   });
 
-  it('should render title in a h1 tag', () => {
+  it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to oi-angular-resource!');
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('h1').textContent).toContain('Github users');
   });
 });

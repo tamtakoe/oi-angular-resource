@@ -5,4 +5,6 @@ import { GithubApi, HttpConfig, Get, Post, Put, Patch, Delete } from './github-a
 @HttpConfig({
   url: '/users/:id',
 })
-export class UsersResource extends GithubApi {}
+export class UsersResource extends GithubApi {
+  query = Get({ isArray: true, cancelDuplicates: true });
+}

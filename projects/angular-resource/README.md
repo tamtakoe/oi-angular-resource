@@ -117,7 +117,7 @@ import { CurrentUserResource } from './resources/current-user.res';
 export class AppComponent implements OnInit {
 
 constructor(
-  private currentUser: CurrentUserResource,
+  private currentUser: CurrentUserResource
 ) {}
   
 public ngOnInit() {
@@ -155,8 +155,27 @@ public ngOnInit() {
 }
 ```
 
+### HTTP config
+- `url` _string_ - URL
+- `host` _string_ - HOST
+- `body` _any_ - Request BODY (for POST, PUT, PATCH etc. methods)
+- `headers` _{ [key: string]: string | string[] }_ - HEADERS
+- `params` _any_ - QUERY | Template | etc. params
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli)
+- `observable` _boolean_ - Response is Observable or Promise
+- `noTrailingSlash` _boolean_ - Remove trailing slash
+- `withCredentials` _boolean_ - Use credentials
+- `isArray` _boolean_ - Result is in array
+- `reportProgress` _boolean_ - ?
+- `responseType` _arraybuffer | blob | json | text_ - Response type
+- `transformRequest` _(request: Request, httpConfig: IHttpConfig) => any_
+- `transformResponse` _(response: any, httpConfig: IHttpConfig) => any_
+- `transformErrorResponse` _(errorResponse: HttpErrorResponse, httpConfig: IHttpConfig) => HttpErrorResponse | never | any_ - (Return undefined or NEVER to prevent this event)
+
+- `mock` _(req: Request, httpConfig: IHttpConfig) => any_ - Server mock
+- `cache` _boolean_ - Cache similar request
+- `cancelDuplicates` _boolean_ - Cancel previous duplicate requests
+
 
 ## Development server
 
@@ -164,7 +183,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 ## Build
 
-Run `ng build AngularResource --prod` to build the project. The build artifacts will be stored in the `dist/angular-resource` directory.
+Run `ng build angular-resource --prod` to build the project. The build artifacts will be stored in the `dist/angular-resource` directory.
 
 ## Publishing
 
