@@ -1,16 +1,6 @@
 import { Type } from '@angular/core';
-import {
-  HttpClient,
-  HttpHeaders,
-  HttpParams,
-  HttpRequest,
-  HttpResponse,
-  HttpErrorResponse,
-  HttpResponseBase,
-  XhrFactory,
-  HttpXhrBackend,
-  HttpEvent
-} from '@angular/common/http';
+import { XhrFactory } from '@angular/common';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase, HttpXhrBackend, HttpEvent } from '@angular/common/http';
 import { UrlTemplate } from './url-template';
 import { RequestCacheWithMap } from './request-cache';
 import { Observable, of, throwError, NEVER, Subject} from 'rxjs';
