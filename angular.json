@@ -163,7 +163,6 @@
       }
     }
   },
-  "defaultProject": "oi-angular-resource",
   "cli": {
     "analytics": "ceb1d23d-fe51-4fff-83f0-34b99765fac8"
   }
