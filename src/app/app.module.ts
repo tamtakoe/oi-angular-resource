@@ -5,6 +5,7 @@ import { AngularResourceModule } from '../../projects/angular-resource/src/lib/a
 // Resources
 import { UsersResource } from './_resources/users.resource';
 import { ReposResource } from './_resources/repos.resource';
+import { GithubApi } from './_resources/github-api';
 
 import { AppComponent } from './app.component';
 
@@ -16,7 +17,7 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule, AngularResourceModule
   ],
-  providers: [UsersResource, ReposResource],
+  providers: [UsersResource, ReposResource, GithubApi],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

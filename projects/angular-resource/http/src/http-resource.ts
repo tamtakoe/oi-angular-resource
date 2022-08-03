@@ -208,7 +208,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
         .pipe(
           takeUntil(cancelStream),
           filter((event: any) => event instanceof HttpResponseBase),
-          tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache)),
+          tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache))
         );
     };
 
@@ -216,10 +216,11 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     const transformedRequestObservable = requestObservable(httpRequest).pipe(
       map((response: HttpResponse<any>) => httpConfig.transformResponse && httpConfig.transformResponse(response.body, httpConfig)),
       catchError((response: HttpErrorResponse) => {
+
         const handledResponse = httpConfig.transformErrorResponse && httpConfig.transformErrorResponse(response, httpConfig);
 
         if (handledResponse instanceof HttpErrorResponse) {
-          return throwError(handledResponse);
+          return throwError(() => handledResponse);
         }
 
         if (handledResponse === undefined || handledResponse === NEVER) {
@@ -228,14 +229,17 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
         return of(handledResponse);
       }),
-      tap(data => {
-        requestQueue.delete(requestId);
-        this.actions.next({ type: resourceMethodName, payload: data, error: null, meta: httpConfig });
-
-      }, error => {
-        requestQueue.delete(requestId);
-        this.actions.next({ type: resourceMethodName, payload: null, error, meta: httpConfig });
-      })
+      tap(
+        {
+          next: (data) => {
+            requestQueue.delete(requestId);
+            this.actions.next({ type: resourceMethodName, payload: data, error: null, meta: httpConfig });
+          },
+          error: (error) => {
+            requestQueue.delete(requestId);
+            this.actions.next({ type: resourceMethodName, payload: null, error, meta: httpConfig });
+          }
+        })
     );
 
     return httpConfig.observable ? transformedRequestObservable : transformedRequestObservable.toPromise();

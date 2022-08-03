@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { AngularResourceModule } from '../../projects/angular-resource/src/lib/angular-resource.module';
 import {UsersResource} from './_resources/users.resource';
 import {ReposResource} from './_resources/repos.resource';
+import {GithubApi} from './_resources/github-api';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -12,6 +13,7 @@ describe('AppComponent', () => {
         RouterTestingModule, AngularResourceModule
       ],
       providers: [
+        GithubApi,
         UsersResource,
         ReposResource
       ],
@@ -27,16 +29,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'Github users`, () => {
+  it(`should have as title 'Angular resource demo`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('Github users');
+    expect(app.title).toEqual('Angular resource demo');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Github users');
+    expect(compiled.querySelector('h1').textContent).toContain('Angular resource demo');
   });
 });

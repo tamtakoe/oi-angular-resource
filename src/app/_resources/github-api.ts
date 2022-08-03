@@ -9,6 +9,12 @@ import {
   Open, Close, Send
 } from '../../../projects/angular-resource/web-socket/src/public_api';
 import {
+  SocketIoConfig,
+  CloseSocketIo,
+  OpenSocketIo,
+  SendSocketIo, SendSocketIoEvent,
+} from '../../../projects/angular-resource/socket-io/src/socket-io-resource';
+import {
   LocalStorageConfig,
   LoadFromLocalStorage,
   SaveToLocalStorage,
@@ -39,9 +45,12 @@ githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
 
 @Injectable()
 @WebSocketConfig({
-  url: 'wss://ololo',
-  protocols: [],
-  onMessageEventName: 'msg'
+  url: 'ws://0.0.0.0:9000',
+  protocols: []
+})
+@SocketIoConfig({
+  url: 'ws://127.0.0.1:3000',
+  options: {}
 })
 @HttpConfig({
   noTrailingSlash: true,
@@ -69,7 +78,11 @@ githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
       window.location.replace(error.error.redirectUrl);
     }
     // const locationUrl = error.headers.get('location');
+    return null;
   }
+})
+@LocalStorageConfig({
+  name: 'ls'
 })
 export class GithubApi extends ReactiveResource {
   // Http methods
@@ -86,6 +99,12 @@ export class GithubApi extends ReactiveResource {
   close   = Close();
   send    = Send();
 
+  // Socket.IO methods
+  openSocketIo    = OpenSocketIo();
+  closeSocketIo   = CloseSocketIo();
+  sendSocketIo    = SendSocketIo();
+  sendSocketIoEvent = SendSocketIoEvent('someEvent');
+
   // Local storage
   loadFromLocalStorage = LoadFromLocalStorage();
   saveToLocalStorage = SaveToLocalStorage();
@@ -95,3 +114,4 @@ export class GithubApi extends ReactiveResource {
 export * from '../../../projects/angular-resource/core/src/public_api';
 export * from '../../../projects/angular-resource/http/src/public_api';
 export * from '../../../projects/angular-resource/web-socket/src/public_api';
+export * from '../../../projects/angular-resource/socket-io/src/public_api';

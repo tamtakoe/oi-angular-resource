@@ -12,7 +12,7 @@ const LocalStorageAction = (method: string, options?: ILocalStorageOptions) =>
   // doLocalStorageAction(): any
   // doLocalStorageAction(data): boolean
 
-   function doLocalStorageAction(this: any, data = null) {
+   function doLocalStorageAction(this: any, data: any = null) {
     const localStorageMethodName = Object.keys(this).find(methodName => this[methodName] === doLocalStorageAction);
     const localStorageConfig = Object.assign({}, this.$localStorageConfig, options);
 
@@ -32,11 +32,11 @@ const LocalStorageAction = (method: string, options?: ILocalStorageOptions) =>
       }
 
       this.actions.next({type: localStorageMethodName, payload: data, error: null, meta: this.$localStorageConfig});
-      return data || true;
+      return data;
 
     } catch (error) {
       this.actions.next({type: localStorageMethodName, payload: null, error, meta: this.$localStorageConfig});
-      return false;
+      return undefined;
     }
   }
 ;
