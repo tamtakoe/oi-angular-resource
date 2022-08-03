@@ -1,20 +1,11 @@
 {
-  "name": "@oi-angular-resource/core",
+  "name": "@angular-resource/core",
   "version": "0.1.2",
-  "description": "Angular core reactive resource",
-  "dependencies": {
-    "tslib": "^2.0.0"
-  },
   "peerDependencies": {
-    "@angular/core": ">=10.0.0"
+    "@angular/common": "^14.0.0",
+    "@angular/core": "^14.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tamtakoe/oi-angular-resource"
-  },
-  "ng-update": {
-    "packageGroup": "NG_UPDATE_PACKAGE_GROUP"
-  },
-  "sideEffects": false,
-  "ngPackage": {}
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
 }

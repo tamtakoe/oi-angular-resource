@@ -1,11 +1,11 @@
 {
-  "name": "oi-angular-resource",
-  "version": "0.1.8",
+  "name": "angular-resource",
+  "version": "0.1.9",
   "peerDependencies": {
-    "@angular/common": ">=10.0.0",
-    "@angular/core": ">=10.0.0"
+    "@angular/common": "^14.0.0",
+    "@angular/core": "^14.0.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.3.0"
   }
 }

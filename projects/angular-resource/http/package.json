@@ -1,21 +1,11 @@
 {
-  "name": "@oi-angular-resource/http",
+  "name": "@angular-resource/http",
   "version": "0.1.2",
-  "description": "Angular resource HTTP adapter",
-  "dependencies": {
-    "tslib": "^2.0.0"
-  },
   "peerDependencies": {
-    "@angular/common": ">=10.0.0",
-    "oi-angular-resource/core": "^0.1.0"
+    "@angular/common": "^14.0.0",
+    "@angular/core": "^14.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tamtakoe/oi-angular-resource"
-  },
-  "ng-update": {
-    "packageGroup": "NG_UPDATE_PACKAGE_GROUP"
-  },
-  "sideEffects": false,
-  "ngPackage": {}
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
 }
