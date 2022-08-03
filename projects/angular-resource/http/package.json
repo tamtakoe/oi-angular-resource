@@ -1,12 +1,13 @@
 {
-  "name": "@oi-angular-resource/socket-io",
-  "version": "0.0.1",
-  "description": "Angular resource Socket.IO adapter",
+  "name": "@oi-angular-resource/http",
+  "version": "0.1.2",
+  "description": "Angular resource HTTP adapter",
   "dependencies": {
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "oi-angular-resource/core": "^0.0.0"
+    "@angular/common": ">=10.0.0",
+    "oi-angular-resource/core": "^0.1.0"
   },
   "repository": {
     "type": "git",

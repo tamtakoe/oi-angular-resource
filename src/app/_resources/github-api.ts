@@ -20,9 +20,35 @@ import {
   SaveToLocalStorage,
   RemoveFromLocalStorage
 } from '../../../projects/angular-resource/local-storage/src/public_api';
+
+// import { ReactiveResource, StateConfig } from '../../../dist/angular-resource/core';
+// import {
+//   HttpConfig,
+//   HttpMethod,
+//   Get, Post, Put, Patch, Delete, Options, Head, Jsonp
+// } from '../../../dist/angular-resource/http';
+// import {
+//   WebSocketConfig,
+//   Open, Close, Send
+// } from '../../../dist/angular-resource/web-socket';
+// import {
+//   SocketIoConfig,
+//   CloseSocketIo,
+//   OpenSocketIo,
+//   SendSocketIo, SendSocketIoEvent,
+// } from '../../../dist/angular-resource/socket-io';
+// import {
+//   LocalStorageConfig,
+//   LoadFromLocalStorage,
+//   SaveToLocalStorage,
+//   RemoveFromLocalStorage
+// } from '../../../dist/angular-resource/local-storage';
+
+
 // import config from '../config';
 import { environment as config } from '../../environments/environment';
 import { Injectable } from '@angular/core';
+
 
 // import {ConfigService} from './config.service';
 

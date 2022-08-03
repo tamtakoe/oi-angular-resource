@@ -1,7 +1,7 @@
 {
-  "name": "@oi-angular-resource/socket-io",
-  "version": "0.0.1",
-  "description": "Angular resource Socket.IO adapter",
+  "name": "@oi-angular-resource/local-storage",
+  "version": "0.0.3",
+  "description": "Angular resource Local Storage adapter",
   "dependencies": {
     "tslib": "^2.0.0"
   },

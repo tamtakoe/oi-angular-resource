@@ -1,7 +1,7 @@
 {
-  "name": "@oi-angular-resource/socket-io",
-  "version": "0.0.1",
-  "description": "Angular resource Socket.IO adapter",
+  "name": "@oi-angular-resource/web-socket",
+  "version": "0.0.3",
+  "description": "Angular resource Websocket adapter",
   "dependencies": {
     "tslib": "^2.0.0"
   },
