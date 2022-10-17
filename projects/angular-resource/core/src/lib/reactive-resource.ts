@@ -1,16 +1,8 @@
 import { Observable, Observer, Subject, ReplaySubject } from 'rxjs';
-import { AnonymousSubject } from 'rxjs/internal/Subject';
-import { map, filter, pluck, tap } from 'rxjs/operators';
-// import { Observer } from 'rxjs/Observer';
-// import { PartialObserver } from 'rxjs/Observer';
-// import { Subject } from 'rxjs/Subject';
-// import { ReplaySubject } from 'rxjs/ReplaySubject';
+// import { AnonymousSubject } from 'rxjs/internal/Subject';
+import { map, filter } from 'rxjs/operators';
 import { Injector, Inject, Type, Injectable } from '@angular/core';
-// import 'rxjs/add/operator/toPromise';
-// import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/pluck';
-// import 'rxjs/add/operator/filter';
-// import 'rxjs/add/operator/do';
+import { Subscription } from 'rxjs';
 
 // TODO implement clean state and unsubscribing
 
@@ -19,6 +11,45 @@ export interface Action {
   payload?: any;
   error?: any;
   meta?: any;
+}
+
+export class AnonymousSubject extends Subject<Action> {
+  private destination: Observer<Action>;
+  constructor(destination: Observer<Action>, source: Observable<Action>) {
+    super();
+    this.destination = destination;
+    this.source = source;
+  }
+
+  override next(value: Action) {
+    const { destination } = this;
+    if (destination?.next) {
+      destination.next(value);
+    }
+  }
+
+  override error(err: Action) {
+    const { destination } = this;
+    if (destination?.error !== undefined) {
+      this.destination.error(err);
+    }
+  }
+
+  override complete() {
+    const { destination } = this;
+    if (destination?.complete !== undefined) {
+      this.destination.complete();
+    }
+  }
+  _subscribe(subscriber: Partial<Observer<Action>> | undefined) {
+    const { source } = this;
+    if (source) {
+      return this.source?.subscribe(subscriber);
+    }
+    else {
+      return Subscription.EMPTY;
+    }
+  }
 }
 
 export function StateConfig(options: {initialState: any; updateState: (state: any, action: Action) => any}) {
@@ -97,10 +128,10 @@ export class ReactiveResource {
     };
     const observable = this.actions.pipe(
       filter(action => type === action.type),
-      pluck('payload')
+      map(action => action?.payload)
     );
 
-    return this.$actions[type] = new AnonymousSubject<Action>(observer, observable);
+    return this.$actions[type] = new AnonymousSubject(observer, observable);
   }
 
   getState() {
@@ -127,4 +158,29 @@ export class ReactiveResource {
   //   // // .filter(newState => newState !== this.$state ? (this.$state = newState, true) : false);
   //   .filter(newState => newState !== this.$state)
   //   .do(newState => this.$state = newState);
+}
+declare type Class<T = any> = new (...args: any[]) => T;
+// export type Newable = {new (): void} extends ReactiveResource;
+const basePropertiesNames = Object.getOwnPropertyNames(new ReactiveResource());
+
+export function createMockClass(OriginalClass: Class, mocks: any = {}): typeof ReactiveResource {
+  @Injectable()
+  class ResourceMock extends ReactiveResource {
+    constructor() {
+      super();
+      const original: any = new OriginalClass();
+
+      Object.getOwnPropertyNames(original)
+        .filter(propertyName => !basePropertiesNames.includes(propertyName) && typeof original[propertyName] === 'function')
+        .forEach(methodName => {
+          (this as any)[methodName] = mocks[methodName] || ((data?: any) => {
+            this.actions.next({type: methodName + ':start', payload: null, error: null, meta: null});
+            this.actions.next({type: methodName, payload: data, error: null, meta: null});
+            return Promise.resolve();
+          })
+        });
+    }
+  }
+
+  return ResourceMock;
 }

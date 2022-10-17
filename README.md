@@ -155,6 +155,29 @@ public ngOnInit() {
 }
 ```
 
+Resource mock for unit tests. Example
+```js
+import {createMockClass, ApiResource} from './_resources/api-resource';
+
+...
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        AngularResourceModule
+      ],
+      providers: [
+        { provider: ApiResource, useClass: createMockClass(ApiResource) }
+      ],
+      declarations: [
+        AppComponent
+      ],
+    }).compileComponents();
+  });
+
+...
+```
+
 ### HTTP config
 - `url` _string_ - URL
 - `host` _string_ - HOST

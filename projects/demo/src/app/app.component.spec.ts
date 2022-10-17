@@ -3,7 +3,7 @@ import { AppComponent } from './app.component';
 import { AngularResourceModule } from 'angular-resource';
 import {UsersResource} from './_resources/users.resource';
 import {ReposResource} from './_resources/repos.resource';
-import {GithubApi} from './_resources/github-api';
+import {createMockClass, GithubApi} from './_resources/github-api';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -12,9 +12,12 @@ describe('AppComponent', () => {
         AngularResourceModule
       ],
       providers: [
-        GithubApi,
-        UsersResource,
-        ReposResource
+        { provider: GithubApi, useClass: createMockClass(GithubApi) },
+        { provider: UsersResource, useClass: createMockClass(UsersResource) },
+        { provider: ReposResource, useClass: createMockClass(ReposResource) },
+        // GithubApi,
+        // UsersResource,
+        // ReposResource
       ],
       declarations: [
         AppComponent
