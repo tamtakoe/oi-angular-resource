@@ -204,6 +204,10 @@ import {createMockClass, ApiResource} from './_resources/api-resource';
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
+## Update NPM version
+
+Run `npm version patch/minor/major` inside root and project/angular-resource directory
+
 ## Build
 
 Run `ng build angular-resource` to build the project. The build artifacts will be stored in the `angular-resource/dist/` directory.
