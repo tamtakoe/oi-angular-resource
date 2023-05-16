@@ -202,7 +202,8 @@ import {createMockClass, ApiResource} from './_resources/api-resource';
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `npm run start:server` to start demo server to use websocket communication
+Run `npm run start:demo-dev` to start dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Update NPM version
 
