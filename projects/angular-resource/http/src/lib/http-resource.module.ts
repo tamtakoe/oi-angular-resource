@@ -6,4 +6,4 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [ HttpClientModule ],
   exports: []
 })
-export class AngularResourceModule { }
+export class HttpResourceModule { }
