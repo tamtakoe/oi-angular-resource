@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { AngularResourceModule } from 'angular-resource';
+import { AngularResourceModule } from '@angular-resource/core';
 
 // Resources
 import { UsersResource } from './_resources/users.resource';

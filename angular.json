@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-resource": {
+    "@angular-resource/core": {
       "projectType": "library",
-      "root": "projects/angular-resource",
-      "sourceRoot": "projects/angular-resource/src",
+      "root": "projects/angular-resource/core",
+      "sourceRoot": "projects/angular-resource/core/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/angular-resource/ng-package.json"
+            "project": "projects/angular-resource/core/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/angular-resource/tsconfig.lib.prod.json"
+              "tsConfig": "projects/angular-resource/core/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/angular-resource/tsconfig.lib.json"
+              "tsConfig": "projects/angular-resource/core/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,9 +27,143 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/angular-resource/src/test.ts",
-            "tsConfig": "projects/angular-resource/tsconfig.spec.json",
-            "karmaConfig": "projects/angular-resource/karma.conf.js"
+            "tsConfig": "projects/angular-resource/core/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@angular-resource/http": {
+      "projectType": "library",
+      "root": "projects/angular-resource/http",
+      "sourceRoot": "projects/angular-resource/http/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/angular-resource/http/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-resource/http/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/angular-resource/http/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/angular-resource/http/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@angular-resource/local-storage": {
+      "projectType": "library",
+      "root": "projects/angular-resource/local-storage",
+      "sourceRoot": "projects/angular-resource/local-storage/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/angular-resource/local-storage/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-resource/local-storage/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/angular-resource/local-storage/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/angular-resource/local-storage/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@angular-resource/socket-io": {
+      "projectType": "library",
+      "root": "projects/angular-resource/socket-io",
+      "sourceRoot": "projects/angular-resource/socket-io/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/angular-resource/socket-io/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-resource/socket-io/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/angular-resource/socket-io/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/angular-resource/socket-io/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "@angular-resource/websocket": {
+      "projectType": "library",
+      "root": "projects/angular-resource/websocket",
+      "sourceRoot": "projects/angular-resource/websocket/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/angular-resource/websocket/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-resource/websocket/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/angular-resource/websocket/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/angular-resource/websocket/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         }
       }
@@ -47,7 +181,9 @@
             "outputPath": "dist/demo",
             "index": "projects/demo/src/index.html",
             "main": "projects/demo/src/main.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "projects/demo/tsconfig.app.json",
             "assets": [
               "projects/demo/src/favicon.ico",
@@ -70,12 +206,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/demo/src/environments/environment.ts",
-                  "with": "projects/demo/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -112,10 +242,11 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/demo/src/test.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/demo/tsconfig.spec.json",
-            "karmaConfig": "projects/demo/karma.conf.js",
             "assets": [
               "projects/demo/src/favicon.ico",
               "projects/demo/src/assets"
@@ -141,7 +272,9 @@
             "outputPath": "dist/demo-dev",
             "index": "projects/demo-dev/src/index.html",
             "main": "projects/demo-dev/src/main.ts",
-            "polyfills": "projects/demo-dev/src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "projects/demo-dev/tsconfig.app.json",
             "assets": [
               "projects/demo-dev/src/favicon.ico",
@@ -164,12 +297,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/demo-dev/src/environments/environment.ts",
-                  "with": "projects/demo-dev/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -206,10 +333,11 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/demo-dev/src/test.ts",
-            "polyfills": "projects/demo-dev/src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/demo-dev/tsconfig.spec.json",
-            "karmaConfig": "projects/demo-dev/karma.conf.js",
             "assets": [
               "projects/demo-dev/src/favicon.ico",
               "projects/demo-dev/src/assets"
@@ -224,6 +352,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "39c2698c-8830-4d6e-bd18-a26a4b6c694f"
   }
 }

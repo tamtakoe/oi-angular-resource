@@ -1,25 +1,25 @@
-import { ReactiveResource, StateConfig } from 'angular-resource/core';
+import { ReactiveResource, StateConfig } from '@angular-resource/core';
 import {
   HttpConfig,
   HttpMethod,
   Get, Post, Put, Patch, Delete, Options, Head, Jsonp
-} from 'angular-resource/http';
+} from '@angular-resource/http';
 import {
   WebSocketConfig,
   Open, Close, Send
-} from 'angular-resource/websocket';
+} from '@angular-resource/websocket';
 import {
   SocketIoConfig,
   CloseSocketIo,
   OpenSocketIo,
   SendSocketIo, SendSocketIoEvent,
-} from 'angular-resource/socket-io';
+} from '@angular-resource/socket-io';
 import {
   LocalStorageConfig,
   LoadFromLocalStorage,
   SaveToLocalStorage,
   RemoveFromLocalStorage
-} from 'angular-resource/local-storage';
+} from '@angular-resource/local-storage';
 
 import { environment as config } from '../../environments/environment';
 import { Injectable } from '@angular/core';

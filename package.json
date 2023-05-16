@@ -1,17 +1,23 @@
 {
   "name": "oi-angular-resource",
-  "version": "0.1.21",
+  "version": "0.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "start:server": "node ./projects/demo-server/server.js",
     "start:demo-dev": "ng serve demo-dev",
     "start:demo": "ng serve demo",
-    "build": "ng build angular-resource",
+    "build": "ng build @angular-resource/core && ng build @angular-resource/http && ng build @angular-resource/local-storage && ng build @angular-resource/socket-io && ng build @angular-resource/websocket",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test --watch=false --browsers=ChromeHeadless"
   },
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamtakoe/oi-angular-resource.git"
+  },
+  "workspaces": [
+    "dist/angular-resource/*"
+  ],
   "dependencies": {
     "@angular/animations": "^16.0.1",
     "@angular/common": "^16.0.1",
@@ -21,24 +27,23 @@
     "@angular/platform-browser": "^16.0.1",
     "@angular/platform-browser-dynamic": "^16.0.1",
     "@angular/router": "^16.0.1",
-    "rxjs": "~7.5.0",
+    "rxjs": "~7.8.0",
     "socket.io-client": "^4.5.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.0.0",
-    "@angular/cli": "~16.0.0",
+    "@angular-devkit/build-angular": "^16.0.1",
+    "@angular/cli": "~16.0.1",
     "@angular/compiler-cli": "^16.0.1",
-    "@types/jasmine": "~4.0.0",
-    "jasmine-core": "~4.1.0",
-    "karma": "~6.3.0",
-    "karma-chrome-launcher": "~3.1.0",
+    "@types/jasmine": "~4.3.0",
+    "jasmine-core": "~4.6.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.0.0",
-    "karma-jasmine-html-reporter": "~1.7.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.0.0",
     "ng-packagr": "^16.0.1",
-    "puppeteer": "^15.5.0",
     "typescript": "~5.0.4"
   }
 }

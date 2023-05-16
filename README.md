@@ -1,15 +1,25 @@
-# AngularResource (WIP)
+# angular-resource
 Angular reactive/http/etc resource (AngularJS like)
 
 You can use it like AngularJS resource, or like event driven library if you follow reactive way.
 E.g. you have chat app. So, you just add http methods for getting all messages and web-socket methods for others and it works in one stream! You also can use internal state of the resource (all or last page of chat messages in our example) and make reducer in the Redux style if you prefer this
 
+## Install
+Install core package and adapters what you need
+```shell
+npm install @angular-resource/core
+npm install @angular-resource/http
+npm install @angular-resource/local-storage
+npm install @angular-resource/socket-io
+npm install @angular-resource/websocket
+```
+
 ## Example
-If you plan to use HTTP resource you should import Angular HttpClientModule or AngularResourceModule from oi-angular-resource
+If you plan to use HTTP resource you should import Angular HttpClientModule or AngularResourceModule from @angular-resource
 
 app.module.ts
 ```js
-import { AngularResourceModule } from 'oi-angular-resource';
+import { AngularResourceModule } from '@angular-resource/core';
 
 @NgModule({
     ...
@@ -23,10 +33,10 @@ First you need to extend base reactiveResource by extra http, websockets and oth
 api-resource.ts
 ```js
 
-import { ReactiveResource, StateConfig } from 'oi-angular-resource/core';
-import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from 'oi-angular-resource/http';
-import { WebSocketConfig, Open, Close, Send } from 'oi-angular-resource/web-socket';
-import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from 'oi-angular-resource/local-storage';
+import { ReactiveResource, StateConfig } from '@angular-resource/core';
+import { HttpConfig, HttpMethod, Get, Post, Put, Patch, Delete, Options, Head, Jsonp} from '@angular-resource/http';
+import { WebSocketConfig, Open, Close, Send } from '@angular-resource/websocket';
+import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFromLocalStorage } from '@angular-resource/local-storage';
 
 @WebSocketConfig({
   url: 'wss://some-url',
@@ -67,10 +77,10 @@ export class ApiResourceExample extends ReactiveResource {
   removeFromLocalStorage = RemoveFromLocalStorage();
 }
 
-export * from 'oi-angular-resource/core';
-export * from 'oi-angular-resource/http';
-export * from 'oi-angular-resource/web-socket';
-export * from 'oi-angular-resource/local-storage';
+export * from '@angular-resource/core';
+export * from '@angular-resource/http';
+export * from '@angular-resource/web-socket';
+export * from '@angular-resource/local-storage';
 ```
 
 You can extend and adjust your resource as many times as you want. New options will be merged
@@ -203,28 +213,46 @@ import {createMockClass, ApiResource} from './_resources/api-resource';
 ## Development server
 
 Run `npm run start:server` to start demo server to use websocket communication
-Run `npm run start:demo-dev` to start dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+Run `npm run start:demo-dev` to start demo application which imports source of angular-resource. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+Run `npm run start:demo` to start demo application which imports build of angular-resource (from dist folder). Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
 
 ## Update NPM version
 
-Run `npm version patch/minor/major` inside root and project/angular-resource directory
+Run `npm version patch/minor/major` to update root project version and do it inside `/projects/angular-resource/*` for each component what you need
+
 
 ## Build
 
-Run `ng build angular-resource` to build the project. The build artifacts will be stored in the `angular-resource/dist/` directory.
+Run `npm run build` to build the project. The build artifacts will be stored in the `/dist` directory.
+
 
 ## Publishing
 
-After building your library with `ng build angular-resource`, go to the dist folder `cd dist/angular-resource` and run `npm publish`.
+Optional run `npm pack --dry-run --workspaces` to check that projects packed successful
+
+Run `npm publish --workspaces --access=public` to publish all packages or `npm publish --workspace=@angular-resource/core --access=public` for single package (e.g. core)
+
 
 ## Running unit tests
 
-Run `ng test angular-resource` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test @angular-resource/core` to execute the unit tests (e.g. for core package) via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
 
-Run `ng e2e angular-resource` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-## Further help
+## Create new adapters etc.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Do it by analogy
+```shell
+ng new oi-angular-resource --no-create-application
+cd oi-angular-resource
+ng generate library @angular-resource/core
+ng generate library @angular-resource/http
+ng generate library @angular-resource/local-storage
+ng generate library @angular-resource/socket-io
+ng generate library @angular-resource/websocket
+ng generate application demo
+ng generate application demo-dev
+```
