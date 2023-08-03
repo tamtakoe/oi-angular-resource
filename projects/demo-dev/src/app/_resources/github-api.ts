@@ -21,45 +21,25 @@ import {
   RemoveFromLocalStorage
 } from '../../../../angular-resource/local-storage/src/public-api';
 
-// import config from '../config';
 import { environment as config } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 
-
-// import {ConfigService} from './config.service';
-
-// If we use undefined headers Angular will throw exceptions
-const matchedCookie = document.cookie.match(/IbAuthCookie=([0-9a-z-]+)(;|$)/);
-const IbAuthCookie = matchedCookie && matchedCookie[1];
-// const resources: any = Object.assign({}, config.resources);
-const githubApi: any = Object.assign({}, config.resources.github);
-let defaultHeaders = {};
-
-// TODO Remove this shit for case with normal authorization
-if (IbAuthCookie) {
-  defaultHeaders = {Authorization: `IBSSO ${IbAuthCookie}`};
-
-} else if (githubApi.authorization) {
-  defaultHeaders = {Authorization: githubApi.authorization};
-}
-
-githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
-
 @Injectable()
 @WebSocketConfig({
-  url: 'ws://0.0.0.0:9000',
+  url: config.resources.websocket.url,
   protocols: []
 })
 @SocketIoConfig({
-  url: 'ws://127.0.0.1:3000',
+  url: config.resources.socketio.url,
+  json: false,
   options: {}
 })
 @HttpConfig({
   noTrailingSlash: true,
-  host: githubApi.host,
-  headers: githubApi.headers,
-  params: githubApi.params,
-  withCredentials: githubApi.withCredentials,
+  host: config.resources.github.host,
+  headers: config.resources.github.headers,
+  params: config.resources.github.params,
+  withCredentials: config.resources.github.withCredentials,
   transformResponse(response, options) {
     let newResponse = response;
 
@@ -88,7 +68,6 @@ githubApi.headers = Object.assign(defaultHeaders, githubApi.headers);
 })
 export class GithubApi extends ReactiveResource {
   // Http methods
-  // query: HttpMethod<{limit?: number}, [{id, type}]>   = Get({isArray: true});
   query   = Get({ isArray: true });
   get     = Get();
   create  = Post();

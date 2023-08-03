@@ -8,9 +8,28 @@
   <tr>
     <th>
       <fieldset>
+        <legend>Redux</legend>
+        <button (click)="increase(1)">Increase</button>
+        <button (click)="decrease(1)">Decrease</button>
+        <div>{{counter}} <small style="font-weight: normal">({{updatedAt | date: 'hh:mm:ss'}})</small></div>
+      </fieldset>
+    </th>
+
+    <th>
+      <fieldset>
         <legend>HTTP</legend>
         <button (click)="loadUsers()">Load users</button>
       </fieldset>
+      <ul>
+        <li *ngFor="let user of users">
+          <a href="#" (click)="showRepos(user.id)">{{ user.login }}</a>
+        </li>
+      </ul>
+      <ul>
+        <li *ngFor="let repo of repos">
+          <a [href]="repo.url">{{repo.name}}</a>
+        </li>
+      </ul>
     </th>
 
     <th>
@@ -35,34 +54,26 @@
       <fieldset>
         <legend>Socket.IO</legend>
         <button (click)="openSocketIo()">Open</button>
+        <button (click)="startServerStream()">Start server stream</button>
+        <button (click)="stopServerStream()">Stop server stream</button>
         <button (click)="sendSocketIo()">Send</button>
         <button (click)="closeSocketIo()">Close</button>
       </fieldset>
     </th>
+
+    <th>
+      <fieldset>
+        <legend>Chat</legend>
+        <button (click)="sendMessage()">Send message</button>
+        <ul *ngIf="!isLoading && !isError">
+          <li *ngFor="let message of messages">
+            #{{message.id}} {{ message.text }}
+          </li>
+        </ul>
+        <div *ngIf="isLoading">Loading...</div>
+        <div *ngIf="isError">Server error</div>
+      </fieldset>
+    </th>
   </tr>
-  <tr>
-    <td>
 
-      <!--    <td style="vertical-align: top; min-width: 300px">-->
-      <ul>
-        <li *ngFor="let user of users">
-          <a href="#" (click)="showRepos(user.id)">{{ user.login }}</a>
-        </li>
-      </ul>
-      <!--    </td>-->
-
-      <!--    <td style="vertical-align: top; min-width: 300px">-->
-      <ul>
-        <li *ngFor="let repo of repos">
-          <a [href]="repo.url">{{repo.name}}</a>
-        </li>
-      </ul>
-      <!--    </td>-->
-    </td>
-
-
-    <td>
-
-    </td>
-  </tr>
 </table>

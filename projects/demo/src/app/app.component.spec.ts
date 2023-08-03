@@ -1,23 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { AngularResourceModule } from 'angular-resource';
-import {UsersResource} from './_resources/users.resource';
-import {ReposResource} from './_resources/repos.resource';
-import {createMockClass, GithubApi} from './_resources/github-api';
+import { createMockClass, GithubApi } from './_resources/github-api';
+import { UsersResource } from './_resources/users.resource';
+import { ReposResource } from './_resources/repos.resource';
+import { CounterStore } from './_resources/counter.store';
+import { ChatResource } from './_resources/chat.resource';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AngularResourceModule
-      ],
       providers: [
-        { provider: GithubApi, useClass: createMockClass(GithubApi) },
-        { provider: UsersResource, useClass: createMockClass(UsersResource) },
-        { provider: ReposResource, useClass: createMockClass(ReposResource) },
-        // GithubApi,
-        // UsersResource,
-        // ReposResource
+        { provide: GithubApi, useClass: createMockClass(GithubApi) },
+        { provide: UsersResource, useClass: createMockClass(UsersResource) },
+        { provide: ReposResource, useClass: createMockClass(ReposResource) },
+        { provide: ChatResource, useClass: createMockClass(ChatResource) },
+        { provide: CounterStore, useClass: createMockClass(CounterStore) }
       ],
       declarations: [
         AppComponent

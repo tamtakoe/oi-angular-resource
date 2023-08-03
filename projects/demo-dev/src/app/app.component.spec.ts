@@ -1,20 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { AngularResourceModule } from '../../../angular-resource/src/lib/angular-resource.module';
-import {UsersResource} from './_resources/users.resource';
-import {ReposResource} from './_resources/repos.resource';
-import {GithubApi} from './_resources/github-api';
+import { UsersResource } from './_resources/users.resource';
+import { ReposResource } from './_resources/repos.resource';
+import { GithubApi } from './_resources/github-api';
+import { ChatResource } from './_resources/chat.resource';
+import { CounterStore } from './_resources/counter.store';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AngularResourceModule
-      ],
       providers: [
         GithubApi,
         UsersResource,
-        ReposResource
+        ReposResource,
+        ChatResource,
+        CounterStore
       ],
       declarations: [
         AppComponent

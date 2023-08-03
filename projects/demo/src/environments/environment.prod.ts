@@ -3,7 +3,19 @@ export const environment = {
   resources: {
     github: {
       host: 'https://api.github.com',
+      headers: {},
+      params: {},
       withCredentials: true
+    },
+    websocket: {
+      url: 'ws://0.0.0.0:9000'
+    },
+    socketio: {
+      url: 'http://127.0.0.1:3000',
+    },
+    chat: {
+      httpHost: 'http://127.0.0.1:3000',
+      socketIoHost: 'ws://127.0.0.1:3000'
     }
   },
 };

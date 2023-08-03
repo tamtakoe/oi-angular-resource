@@ -1,4 +1,7 @@
+const express = require('express');
+const cors = require('cors')
 const WebSocket = require('ws');
+const messagesDB = require('./messagesDB');
 const wsServer = new WebSocket.Server({ port: 9000 });
 
 wsServer.on('connection', onConnect);
@@ -51,21 +54,34 @@ console.log('WebSocket server is listening port 9000');
 //
 //
 // io.listen(3000);
+corsSettings = {
+  origin: "http://localhost:4200",
+  methods: ["GET", "POST"]
+}
 
-const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:4200",
-    methods: ["GET", "POST"]
-  }
+  cors: corsSettings
 });
 
+// Websocket server
 console.log('SIO');
+
+let isDemoEventsStreaming = false;
+
 io.on('connection', socket => {
   console.log('CONNECTION');
+  socket.on('startServerStream', data => {
+    console.log('Demo events stream started', data);
+    isDemoEventsStreaming = true;
+  });
+  socket.on('stopServerStream', data => {
+    console.log('Demo events stream canceled', data);
+    isDemoEventsStreaming = false;
+  });
+
   socket.on('event', data => {
     console.log('EVENT', data);
   });
@@ -73,22 +89,40 @@ io.on('connection', socket => {
     console.log('socketIoTest EVENT', data);
   });
   socket.on('someEvent', data => {
-    console.log('SOME EVENT', data);
+    console.log('someEvent EVENT', data);
+  });
+  socket.on('sendMessage', message => {
+    console.log('-> sendMessage EVENT', message);
+    const newMessage = { id: ++messagesDB.count, ...JSON.parse(message) };
+
+    messagesDB.messages.push(newMessage)
+    socket.emit('newMessage', JSON.stringify(newMessage));
+    console.log('<- newMessage EVENT', JSON.stringify(newMessage))
   });
   socket.on('disconnect', () => {
     console.log('DISCONNECT');
   });
 
+  // Streaming of demo events
   setInterval(() => {
-    socket.emit('request', 'REQ');
+    isDemoEventsStreaming && socket.emit('request', 'REQ');
   }, 2000);
 
   setInterval(() => {
-    io.emit('broadcast', 'BRDC');
+    isDemoEventsStreaming && io.emit('broadcast', 'BRDC');
   }, 5000)
 }, error => {
   console.log('ERR', error)
 });
+
+// HTTP server
+app.use(cors(corsSettings))
+
+app.get('/messages', (req, res) => {
+  console.log('Load messages')
+  res.send(messagesDB.messages);
+})
+
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });

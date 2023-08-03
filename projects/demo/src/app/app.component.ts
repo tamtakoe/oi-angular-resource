@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { CounterStore } from './_resources/counter.store';
 import { UsersResource } from './_resources/users.resource';
 import { ReposResource } from './_resources/repos.resource';
 import { GithubApi } from './_resources/github-api';
+import { ChatResource } from './_resources/chat.resource';
 
 @Component({
   selector: 'app-root',
@@ -12,35 +14,96 @@ export class AppComponent {
   title = 'Angular resource demo';
   users: any[] = [];
   repos: any[] = [];
+  messages: any[] = [];
+  isLoading = false;
+  isError = false;
+  counter = 0
+  updatedAt = 0
 
-  constructor(private usersResource: UsersResource, private reposResource: ReposResource, private githubApi: GithubApi) {
+  constructor(
+    private githubApi: GithubApi,
+    private counterStore: CounterStore, 
+    private usersResource: UsersResource, 
+    private reposResource: ReposResource,
+    private chatResource: ChatResource
+    ) {
 
-    // Events
+    // Effects
+    this.counterStore.action('increase', 'decrease')
+    .subscribe(payload => {
+      this.counterStore.updateAt(Date.now());
+    });
+    
+    // Subscriptions
+    this.counterStore.state.subscribe(state => {
+      console.log('state', state)
+      this.counter = state.counter;
+      this.updatedAt = state.updatedAt
+      // this.counterStore.updateAt(Date.now());
+    });
+
     this.githubApi.actions.subscribe({
       next: (data) => {
-        console.log('githubApi:data', data);
+        console.log('githubApi data', data);
       },
       complete: () => {
-        console.log('githubApi:complete');
+        console.log('githubApi complete');
       },
       error: (error) => {
-        console.log('githubApi:error', error);
+        console.log('githubApi error', error);
       }
     })
 
-    //
     this.usersResource.actions.subscribe({
       next: (data) => {
-        console.log('usersResource:data', data);
+        console.log('usersResource data', data);
       },
       error: (error) => {
-        console.log('usersResource:error', error);
+        console.log('usersResource error', error);
       }
     })
+
+    // Chat in event driven style
+    // this.chatResource.getMessages()
+    //   .then((messages: any[]) => {
+    //     this.messages = messages;
+    //   })
+    //   .catch((error: any) => {
+    //     console.log('HTTP server error', error)
+    //   })
+      
+    // this.chatResource.connect()
+    //   .catch(error => {
+    //     console.log('WS server error', error);
+    //   })
+
+    // this.chatResource.action('newMessage')
+    //   .subscribe(message => {
+    //     this.messages.push(message)
+    //   })
+
+    // Chat in redux style
+    this.chatResource.state.subscribe(state => {
+      this.messages = state.messages;
+      this.isLoading = state.isLoading;
+      this.isError = state.isError;
+    });
+    this.chatResource.getMessages()
+    this.chatResource.connect()
+  }
+
+  // Redux
+  increase(num: number) {
+    this.counterStore.increase(num);
+  }
+
+  decrease(num: number) {
+    this.counterStore.decrease(num);
   }
 
   // HTTP
   loadUsers() {
+    // this.githubApi.getUsers().then((users: any[]) => {
     this.usersResource.query().then((users: any[]) => {
       this.users = users;
       console.log('USERS', users);
@@ -99,6 +162,18 @@ export class AppComponent {
     });
   }
 
+  startServerStream() {
+    this.githubApi.sendSocketIo('startServerStream')
+    .then(() => console.log('Server stream was started. Now we are getting of broadcast and regular events'))
+    .catch(error => console.log('Error', error));
+  }
+
+  stopServerStream() {
+    this.githubApi.sendSocketIo('stopServerStream')
+    .then(() => console.log('Server stream was stopped'))
+    .catch(error => console.log('Error', error));
+  }
+
   sendSocketIo() {
     const data = { action: 'ECHO', data: Math.random()};
     console.log('SEND Socket.IO', data);
@@ -116,6 +191,13 @@ export class AppComponent {
     console.log('CLOSE Socket.IO');
     this.githubApi.closeSocketIo().then(d => {
       console.log('CLOSE Socket.IO ANSWER', d);
+    });
+  }
+
+  // Chat
+  sendMessage() {
+    this.chatResource.sendMessage({text: `Message ${(new Date()).toUTCString()}`}).then(d => {
+      console.log(`Message was sended by Socket.IO`, d);
     });
   }
 }

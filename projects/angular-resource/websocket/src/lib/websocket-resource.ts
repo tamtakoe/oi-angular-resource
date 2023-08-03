@@ -51,7 +51,11 @@ function send(this: any, data: any) {
     this.actions.next({type: sendMethodName, payload: data, error: null, meta: this.$wsConfig});
 
   } catch (error) {
-    this.actions.next({type: sendMethodName, payload: null, error: this.$ws ? error : WS_NOT_EXIST, meta: this.$wsConfig});
+    if (!this.$ws) {
+       error = WS_NOT_EXIST
+    }
+    this.actions.next({type: sendMethodName, payload: null, error, meta: this.$wsConfig});
+    return Promise.reject(error);
   }
 
   return Promise.resolve(data);

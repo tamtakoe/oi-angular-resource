@@ -14,6 +14,9 @@ import {ISocketioConfig} from './socket-io-config';
 export {ISocketioConfig} from './socket-io-config';
 
 const WS_NOT_EXIST = new ErrorEvent('Websocket is not opened');
+const defaultSocketioConfig = {
+  json: true
+}
 
 function close(this: any) {
   const closeMethodName = Object.keys(this).find(methodName => this[methodName] === close);
@@ -37,6 +40,9 @@ function close(this: any) {
 }
 
 function doSend(this: any, sendMethodName: string, eventName: string, data?: any) {
+  if (this.$socketioConfig.json) {
+    data = JSON.stringify(data);
+  }
   this.actions.next({type: sendMethodName + ':start', payload: data, error: null, meta: this.$socketioConfig});
 
   try {
@@ -44,7 +50,11 @@ function doSend(this: any, sendMethodName: string, eventName: string, data?: any
     this.actions.next({type: sendMethodName, payload: data, error: null, meta: this.$socketioConfig});
 
   } catch (error) {
-    this.actions.next({type: sendMethodName, payload: null, error: this.$socketio ? error : WS_NOT_EXIST, meta: this.$socketioConfig});
+    if (!this.$socketio) {
+      error = WS_NOT_EXIST;
+    }
+    this.actions.next({type: sendMethodName, payload: null, error, meta: this.$socketioConfig});
+    return Promise.reject(error);
   }
 
   return Promise.resolve(data);
@@ -99,20 +109,27 @@ export function OpenSocketIo(options?: undefined) {
 
       socketio.on('disconnect', (disconnectReason) => {
         resolve(socketio);
-        this.actions.next({type: closeMethodName, payload: null, error: disconnectReason, meta: socketioConfig});
+        this.actions.next({type: closeMethodName, payload: disconnectReason, error: null, meta: socketioConfig});
 
         // @ts-ignore
         socketio = this.$socketio = null;
       })
 
       socketio.on('connect_error', (error) => {
-        resolve(socketio);
-        this.actions.next({type: closeMethodName, payload: null, error: error, meta: socketioConfig});
+        reject(error);
+        this.actions.next({type: openMethodName, payload: null, error: error, meta: socketioConfig});
       })
 
       socketio.onAny((event, ...args) => {
-        console.log(`got ${event}: ${args}`);
-        // this.actions.next({type: sendMethodName, payload: null, error: error, meta: socketioConfig});
+        // TODO Whether we should use one argument or all?
+        let payload = args[0];
+
+        if (socketioConfig.json) {
+          try {
+            payload = JSON.parse(payload)
+          } catch(error) {}
+        }
+        this.actions.next({type: event, payload, error: null, meta: socketioConfig});
       });
     });
   };
@@ -161,7 +178,7 @@ export function SocketIoConfig(options?: ISocketioConfig) {
       const instance = new c(...args);
 
       // Set options
-      instance.$socketioConfig = Object.assign({}, instance.$socketioConfig, options);
+      instance.$socketioConfig = Object.assign({}, defaultSocketioConfig, instance.$socketioConfig, options);
 
       return instance;
     };

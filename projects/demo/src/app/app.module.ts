@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpResourceModule } from '@angular-resource/http';
 
 // Resources
 import { UsersResource } from './_resources/users.resource';
 import { ReposResource } from './_resources/repos.resource';
+import { CounterStore } from './_resources/counter.store';
+import { ChatResource } from './_resources/chat.resource';
 import { GithubApi } from './_resources/github-api';
 
 import { AppComponent } from './app.component';
@@ -14,9 +15,9 @@ import { AppComponent } from './app.component';
     AppComponent
   ],
   imports: [
-    BrowserModule, HttpResourceModule
+    BrowserModule
   ],
-  providers: [UsersResource, ReposResource, GithubApi],
+  providers: [GithubApi, CounterStore, UsersResource, ReposResource, ChatResource],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

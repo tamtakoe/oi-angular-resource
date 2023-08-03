@@ -1,4 +1,4 @@
-import { Observable, Observer, Subject, ReplaySubject } from 'rxjs';
+import { Observable, Observer, Subject, ReplaySubject, OperatorFunction } from 'rxjs';
 // import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { map, filter } from 'rxjs/operators';
 import { Injector, Inject, Type, Injectable } from '@angular/core';
@@ -11,6 +11,12 @@ export interface Action {
   payload?: any;
   error?: any;
   meta?: any;
+}
+
+export interface StateConfigOptions {
+  initialState: any; 
+  updateState: (state: any, action: Action) => any; 
+  allowDuplicatedActions?: boolean // If false (by default) skip duplicated actions during one cycle iteration. Prevent infiny loop issues
 }
 
 export class AnonymousSubject extends Subject<Action> {
@@ -52,13 +58,14 @@ export class AnonymousSubject extends Subject<Action> {
   }
 }
 
-export function StateConfig(options: {initialState: any; updateState: (state: any, action: Action) => any}) {
+export function StateConfig(options: StateConfigOptions) {
   // return function (target: Type<Resource>) {
   return (target: Type<void>) => {
     const original = target;
 
     // NOTE: If you see `Error: No provider for $Some$Resource!` it means that you forgot to declare provider for Resource
     // which was extended from ReactiveResource. You can add this to `providers` array of app.module or your component
+    // TODO investigate how to get and use resource name instead of abstract $Some$Resource
     const newConstructor: any = function $Some$Resource(...args: any[]) {
       const c: any = function childConstructor(...args2: any[]) {
         return new original(...args2);
@@ -67,6 +74,7 @@ export function StateConfig(options: {initialState: any; updateState: (state: an
       const instance = new c(...args);
 
       // Set options
+      instance.$options = options
       instance.$state = options.initialState;
 
       if (options.updateState) {
@@ -85,31 +93,7 @@ export function StateConfig(options: {initialState: any; updateState: (state: an
 @Injectable()
 export class ReactiveResource {
   actions: Subject<Action> = new Subject();
-  errors: Observable<any> = this.actions.pipe(
-    filter(action => action.error),
-    map(action => action.error)
-  );
-  state: Observable<any>;
-
-  private $state: any = null;
-  private $actions: any = {};
-
-  constructor() {
-    const stateSubject = new ReplaySubject(1);
-
-    this.state = stateSubject.asObservable();
-    this.actions.subscribe(action => {
-      const newState = this.$updateState(this.$state, action);
-
-      // Fire event if state is different
-      if (newState !== this.$state) {
-        this.$state = newState;
-        stateSubject.next(newState);
-      }
-    });
-  }
-
-  action(type: string): Subject<any> {
+  action(...types: Array<string>): Subject<any> {
     // TODO fix action('someActionType').unsubscribe()
     // type = Array.isArray(type) ? type : [type];
     // return this.actions
@@ -117,28 +101,82 @@ export class ReactiveResource {
 
     // this.actions.filter(action => type === action.type).pluck('payload');
 
-    if (this.$actions[type]) {
-      return this.$actions[type];
+    // Remove duplicates
+    types = Array.from(new Set(types))
+
+    const typesId = types.sort().join('|')
+
+    if (this.$actions[typesId]) {
+      return this.$actions[typesId];
     }
 
     const observer: Observer<any> = {
-      next: payload => this.actions.next({type, payload}),
-      error: error => this.actions.error({type, error}),
-      complete: () => this.actions.complete(),
+      next: payload => types.forEach(type => this.actions.next({type, payload})),
+      error: error => types.forEach(type => this.actions.next({type, error})) ,
+      complete: () => {throw new Error('Use <Resource>.actions.complete() to complete whole resource stream')}
     };
     const observable = this.actions.pipe(
-      filter(action => type === action.type),
-      map(action => action?.payload)
+      filter(action => types.includes(action.type) && !action.error),
+      map(action => action.payload)
     );
 
-    return this.$actions[type] = new AnonymousSubject(observer, observable);
+    return this.$actions[typesId] = new AnonymousSubject(observer, observable);
+  }
+  errors: Observable<any> = this.actions.pipe(
+    filter(action => action.error),
+    map(action => action.error)
+  );
+  error(...types: Array<string>): Observable<any> {
+    // Remove duplicates
+    types = Array.from(new Set(types))
+
+    const typesId = types.sort().join('|')
+
+    if (this.$errors[typesId]) {
+      return this.$errors[typesId];
+    }
+
+    const observer: Observer<any> = {
+      next: error => types.forEach(type => this.actions.next({type, error})),
+      error: () => {throw new Error('Use <Resource>.actions.error(<Error>) to complete whole resource stream with error')},
+      complete: () => {throw new Error('Use <Resource>.actions.complete() to complete whole resource stream')}
+    };
+    const observable = this.actions.pipe(
+      filter(action => types.includes(action.type) && action.error),
+      map(action => action.error)
+    );
+
+    return this.$errors[typesId] = new AnonymousSubject(observer, observable);
+  }
+  state: Observable<any>;
+
+  private $options: any = {}
+  private $actions: any = {};
+  private $errors: any = {};
+  private $state: any = null;
+  private $updateState = (state: any, action: Action) => state; // (state, action) => !action.error && action.payload || state; if we need to save any action by default
+
+  constructor() {
+    const stateSubject = new ReplaySubject(1);
+    const stateActionsSet = new Set()
+
+    this.state = stateSubject.asObservable();
+    this.actions.subscribe(action => {
+      const newState = this.$updateState(this.$state, action);
+
+      // Fire event if state is different
+      if (newState !== this.$state && !this.$options.allowDuplicatedActions && !stateActionsSet.has(action.type)) {
+        this.$state = newState;
+        stateActionsSet.add(action.type)
+        stateSubject.next(newState);
+        queueMicrotask(() => stateActionsSet.delete(action.type))
+      }
+    });
   }
 
   getState() {
     return this.$state;
   }
-
-  private $updateState = (state: any, action: Action) => state; // (state, action) => !action.error && action.payload || state; if we need to save any action by default
 
   // Сделать пример с релейшнами
 
@@ -159,6 +197,7 @@ export class ReactiveResource {
   //   .filter(newState => newState !== this.$state)
   //   .do(newState => this.$state = newState);
 }
+
 declare type Class<T = any> = new (...args: any[]) => T;
 // export type Newable = {new (): void} extends ReactiveResource;
 const basePropertiesNames = Object.getOwnPropertyNames(new ReactiveResource());

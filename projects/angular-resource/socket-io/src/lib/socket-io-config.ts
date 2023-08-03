@@ -1,6 +1,7 @@
 /** Config interface */
 export interface ISocketioConfig {
   url: string;
+  json?: boolean;
   /**
    * Options
    * References:

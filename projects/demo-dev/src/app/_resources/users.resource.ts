@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import {GithubApi, HttpConfig, Get, Post, Put, Patch, Delete, WebSocketConfig, Close, Open, Send} from './github-api';
+import {GithubApi, HttpConfig, Get, Post, Put, Patch, Delete, WebSocketConfig, Close, Open, Send, HttpMethod} from './github-api';
 
+interface GetUserReq {
+  limit?: number
+}
+interface User {
+  id: number;
+  login: string;
+}
 @Injectable()
-// @WebSocketConfig({
-//   url: 'wss://0.0.0.0:9000',
-//   protocols: []
-// })
 @HttpConfig({
   url: '/users/:id',
 })
 export class UsersResource extends GithubApi {
-  override query = Get({ isArray: true, cancelDuplicates: true });
+  override query: HttpMethod<GetUserReq, User[]> = Get({ isArray: true, cancelDuplicates: true });
 }

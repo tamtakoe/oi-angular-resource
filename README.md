@@ -1,8 +1,8 @@
 # angular-resource
 Angular reactive/http/etc resource (AngularJS like)
 
-You can use it like AngularJS resource, or like event driven library if you follow reactive way.
-E.g. you have chat app. So, you just add http methods for getting all messages and web-socket methods for others and it works in one stream! You also can use internal state of the resource (all or last page of chat messages in our example) and make reducer in the Redux style if you prefer this
+You can use it like AngularJS resource, or like event-driven library if you are following a reactive way.
+E.g. you have chat app. So, you just add http-methods for getting all messages and websocket-methods for get/send new messages and it works in one stream! You also can use internal state of the resource and make reducer in the Redux style if you prefer this one
 
 ## Install
 Install core package and adapters what you need
@@ -15,20 +15,7 @@ npm install @angular-resource/websocket
 ```
 
 ## Example
-If you plan to use HTTP resource you should import Angular HttpClientModule or AngularResourceModule from @angular-resource
-
-app.module.ts
-```js
-import { AngularResourceModule } from '@angular-resource/core';
-
-@NgModule({
-    ...
-    imports: [AngularResourceModule]
-})
-...
-```
-
-First you need to extend base reactiveResource by extra http, websockets and other methods what you need and adjust them by default values etc.
+The first thing to do is to extend the base reactiveResource class and decorate it by http, websockets and other adapters what you need.
 
 api-resource.ts
 ```js
@@ -45,16 +32,18 @@ import { LocalStorageConfig, LoadFromLocalStorage, SaveToLocalStorage, RemoveFro
 })
 @LocalStorageConfig({
   name: 'myStorage', // Random string
-  transformRequest: trReqFunc, // JSON.stringify
-  transformResponse: trResFunc // JSON.parse
+  transformRequest: JSON.stringify,
+  transformResponse: JSON.parse
 })
 @HttpConfig({
   host: 'http://test.com',
   headers: {Authorization: 'some-token'},
   withCredentials: true,
   transformResponse (response, options) {
-    //...
-    return newResponse;
+    if (options.isArray) {
+      return response.data
+    }
+    return response;
   }
 })
 export class ApiResourceExample extends ReactiveResource {
@@ -126,42 +115,49 @@ import { CurrentUserResource } from './resources/current-user.res';
 })
 export class AppComponent implements OnInit {
 
-constructor(
-  private currentUser: CurrentUserResource,
-) {}
-  
-public ngOnInit() {
-  // Common way (Promise)
-  this.currentUser.get()
-    .then(user => {
-      console.log(user)
-    })
-    .catch(error => {
-      console.error(error)
-    })
+  constructor(
+    private currentUser: CurrentUserResource,
+  ) {}
     
-  // Reactive way (Observable)
-  this.currentUser.state.subscribe(state => {
-    console.log(state);
-  });
+  public ngOnInit() {
+    // Common way (Promise)
+    this.currentUser.get()
+      .then(user => {
+        console.log(user)
+      })
+      .catch(error => {
+        console.error(error)
+      })
+      
+    // Event-driven way (Observable)
+    this.currentUser.actions.next({type: 'customEvent', payload: 123});
+    this.currentUser.actions.next({type: 'customError', error: 'Err123'});
 
-  this.currentUser.errors.subscribe(error => {
-    console.log(error);
-  });
-  
-  // Use custom events (Subject)
-  this.currentUser.actions.next({type: 'custom', payload: 123});
-  
-  this.currentUser.actions.subscribe(action => {
-    console.log(action); //{type: 'custom', payload: 123}
-  });
+    this.currentUser.actions.subscribe(action => {
+      console.log(action); // {type: 'customEvent', payload: 123} and {type: 'customError', error: 'Err123'}
+    });
 
-  // Or with sugar
-  this.currentUser.action('someEvent').next(123);
+    this.currentUser.errors.subscribe(error => {
+      console.log(error); // Err123
+    });
 
-  this.currentUser.action('someEvent').subscribe(payload => {
-    console.log(payload); //123
-  });
+    // Or with sugar
+    this.currentUser.action('event1').next(123);
+    this.currentUser.error('event2', 'event3').next('Err123');
+
+    this.currentUser.action('event1', 'event2', 'event3').subscribe(payload => {
+      console.log(payload); // 123
+    });
+
+    this.currentUser.error('event1', 'event2').subscribe(error => {
+      console.log(error); // Err123
+    });
+
+    // Redux way
+    this.currentUser.state.subscribe(state => {
+      console.log(state);
+    });
+  }
 }
 ```
 
@@ -173,11 +169,8 @@ import {createMockClass, ApiResource} from './_resources/api-resource';
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AngularResourceModule
-      ],
       providers: [
-        { provider: ApiResource, useClass: createMockClass(ApiResource) }
+        { provide: ApiResource, useClass: createMockClass(ApiResource) }
       ],
       declarations: [
         AppComponent
