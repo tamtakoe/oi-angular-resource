@@ -93,8 +93,8 @@ export class GithubApi extends ReactiveResource {
   removeFromLocalStorage = RemoveFromLocalStorage();
 }
 
-export * from '../../../../angular-resource/core/src/public-api';
-export * from '../../../../angular-resource/http/src/public-api';
-export * from '../../../../angular-resource/local-storage/src/public-api';
-export * from '../../../../angular-resource/websocket/src/public-api';
-export * from '../../../../angular-resource/socket-io/src/public-api';
+export * from '@angular-resource/core';
+export * from '@angular-resource/http';
+export * from '@angular-resource/local-storage';
+export * from '@angular-resource/websocket';
+export * from '@angular-resource/socket-io';
