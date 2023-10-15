@@ -31,7 +31,7 @@ export class CounterStore extends ReactiveResource {
   // Actions
   increase = (num: number) => this.action('increase').next(num);
   decrease = (num: number) => this.action('decrease').next(num);
-  updateAt = (num: number) => this.action('updateAt').next(num);
+  updateAt = (date: number) => this.action('updateAt').next(date);
 
   // or this way if you want to incapsulate simple logic like current date, hash etc. inside the action
   //increase = (num: number) => { this.action('updateAt').next(Date.now()); this.action('increase').next(num); }
