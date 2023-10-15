@@ -214,7 +214,7 @@ Run `npm run start:demo` to start demo application which imports build of angula
 
 ## Update NPM version
 
-Run `npm version patch/minor/major` to update root project version and do it inside `/projects/angular-resource/*` for each component what you need
+Run `npm version patch` (minor, major) to update root project version and do it inside `/projects/angular-resource/*` for each component what you need
 
 
 ## Build
