@@ -16,8 +16,9 @@ npm install @angular-resource/websocket
 
 ## Quick start demo
 ```shell
-Run `npm run start:server` # simple api server
-Run `npm run start:demo`   # demo page
+npm run start:server # simple api server
+npm run start:demo   # demo page
+open http://localhost:4200
 ```
 
 ## Example
