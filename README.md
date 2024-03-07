@@ -21,7 +21,7 @@ Run `npm run start:demo`   # demo page
 ```
 
 ## Example
-The first thing to do is to extend the base reactiveResource class and decorate it by http, websockets and other adapters what you need.
+The first thing to do is to extend the base ReactiveResource class and decorate it by http, websockets and other adapters what you need.
 
 api-resource.ts
 ```js
