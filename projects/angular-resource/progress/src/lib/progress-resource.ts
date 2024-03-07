@@ -2,8 +2,8 @@ import { Type } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 
 export interface IProgressConfig {
-  init?: (data?: any) => any;
-  check?: (data: any) => any;
+  init?: (data?: any) => Promise<any>;
+  check?: (checking: IChecking) => any;
   fakeProgressFn?: (x: number) => number;
   interval?: number;
   timeout?: number;

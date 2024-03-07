@@ -1,6 +1,13 @@
-import { Action } from '@angular-resource/core';
 import { Type } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
+
+interface Action {
+  type: string;
+  payload?: any;
+  error?: any;
+  meta?: any;
+  id?: string;
+}
 
 export interface IPubSubConfig {
   timeout?: number;
@@ -8,6 +15,7 @@ export interface IPubSubConfig {
   publish?: (data?: Action) => void;
   subscriber?: Observable<Action>;
   autoConnect?: boolean;
+  mock?: any;
 }
 
 const defaultConfig = {
@@ -23,8 +31,19 @@ export function Send(editorConfig: IPubSubConfig = {}) {
     
     const observable = new Observable((subscriber: Subscriber<any>) => {
       const messageId = String(Math.round(Math.random() * 100000));
-      const message = {id: messageId, type: sendMethodName, payload: data, meta: sendConfig}
+      const message = { id: messageId, type: sendMethodName, payload: data, meta: sendConfig };
 
+      if (sendConfig.mock) {
+        const mock = typeof sendConfig.mock === 'function' ? sendConfig.mock() : sendConfig.mock
+
+        subscriber.next(mock);
+        subscriber.complete();
+
+        this.actions.next({ ...message, type: sendMethodName + ':start' });
+        this.actions.next({ ...message, type: sendMethodName, payload: mock });
+        return;
+      } 
+      
       if (sendConfig.timeout) {
         const subscription = this.actions.subscribe((action: any) => {
           if (action.type === sendMethodName && action.id === messageId) {
@@ -36,8 +55,8 @@ export function Send(editorConfig: IPubSubConfig = {}) {
   
         setTimeout(() => {
           subscription.unsubscribe();
-          subscriber.error(new Error(`Request Timeout (${sendConfig.timeout} ms)`))
-        }, sendConfig.timeout)
+          subscriber.error(new Error(`Request Timeout (${sendConfig.timeout} ms)`));
+        }, sendConfig.timeout);
 
       } else {
         subscriber.complete();

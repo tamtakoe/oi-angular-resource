@@ -61,7 +61,24 @@ export class GenerationComponent {
         })
   }
 }
-
 ```
+
+### ProgressConfig
+- `init` _(data?: any) => Promise<any>_ - HTTP-request function
+- `check` _(checking: Checking) => any_ - Function to run checking HTTP-request
+- `fakeProgressFn` _(x: number) => number_ (default: easyOut) - Function to generate fake progress
+- `interval` _number_ (default: 10000) - How often to check status in ms
+- `timeout` _number_ (default: 600000) - How long to check status
+- `observable` _boolean_ (default: false) - Return Observable or Promise
+
+### Checking
+- `initData` _any_ - Responce of initial request
+- `next` _(data: any) => void_ - Execute if process is in progress
+- `complete` _(data: any) => void_ - Execute if process is completed
+- `error` _(error: any) => void_ - Execute if an error during the process
+- `getProgress` _(format: string) => number_ (default: format='xx.xx' (e.g. 15.03%)) - Get fake progress of process
+
+### Progress
+- `Progress(config: ProgressConfig)` returns _(payload: any) => Promise | Observable_ - Create progress method
 
 See also: [angular-resource documentation](https://github.com/tamtakoe/oi-angular-resource)

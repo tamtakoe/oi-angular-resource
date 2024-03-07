@@ -11,6 +11,7 @@ export interface Action {
   payload?: any;
   error?: any;
   meta?: any;
+  id?: string;
 }
 
 export interface StateConfigOptions {
