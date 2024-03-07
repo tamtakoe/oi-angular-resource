@@ -261,6 +261,7 @@ export function HttpConfig(options: IHttpConfig) {
 
       // Set options
       const httpConfig = Object.assign({
+        url: '',
         httpHeaders: new HttpHeaders(),
         httpParams: new HttpParams(),
         transformRequest: (req: any) => req,

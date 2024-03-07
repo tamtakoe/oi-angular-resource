@@ -3,6 +3,7 @@ Progress-checking-adapter of angular-resource
 
 Combine checking progress requests to make one endpoint
 
+### Example
 ```ts
 // Resource
 @HttpConfig({

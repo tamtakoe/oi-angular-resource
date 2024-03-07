@@ -4,7 +4,7 @@ Publish-Subscriber wrapper of angular-resource
 Wraps any Pub-Sub service to promise-like resource.
 Your Pub-Sub service should answer any message (except cases with timeout: 0)
 
-
+### Example
 ```ts
 @PubSubConfig({
   publish: (message?: Action) => {
