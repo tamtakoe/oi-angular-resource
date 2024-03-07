@@ -7,6 +7,7 @@ interface Action2 {
   payload?: any;
   error?: any;
   meta?: any;
+  id?: string;
 }
 
 import { io } from "socket.io-client";

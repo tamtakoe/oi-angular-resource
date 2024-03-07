@@ -14,6 +14,12 @@ npm install @angular-resource/socket-io
 npm install @angular-resource/websocket
 ```
 
+## Quick start demo
+```shell
+Run `npm run start:server` # simple api server
+Run `npm run start:demo`   # demo page
+```
+
 ## Example
 The first thing to do is to extend the base reactiveResource class and decorate it by http, websockets and other adapters what you need.
 

@@ -5,6 +5,8 @@ import { ReposResource } from './_resources/repos.resource';
 import { GithubApi } from './_resources/github-api';
 import { ChatResource } from './_resources/chat.resource';
 import { CounterStore } from './_resources/counter.store';
+import { GenerationResource } from './_resources/generation.resource';
+import { PubSubResource } from './_resources/pubsub.resource';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -14,7 +16,9 @@ describe('AppComponent', () => {
         UsersResource,
         ReposResource,
         ChatResource,
-        CounterStore
+        CounterStore,
+        GenerationResource,
+        PubSubResource
       ],
       declarations: [
         AppComponent

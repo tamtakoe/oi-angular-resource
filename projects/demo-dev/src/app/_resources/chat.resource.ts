@@ -49,12 +49,15 @@ export class ChatResource extends ReactiveResource {
     super()
 
     this.error('getMessages').subscribe(error => {
-      setTimeout(() => {
-        console.log('HTTP reconnect...')
-        this.getMessages()
-      }, 5000)
+      if ((this as any).$socketio.connected) {
+        setTimeout(() => {
+          console.log('HTTP reconnect...')
+          this.getMessages()
+        }, 5000)
+      } 
     })
     this.error('connect').subscribe(error => {
+      console.log(2, error)
       setTimeout(() => {
         console.log('WS reconnect...')
         this.connect()

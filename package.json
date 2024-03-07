@@ -7,7 +7,7 @@
     "start:server": "node ./projects/demo-server/server.js",
     "start:demo-dev": "ng serve demo-dev",
     "start:demo": "ng serve demo",
-    "build": "ng build @angular-resource/core && ng build @angular-resource/http && ng build @angular-resource/local-storage && ng build @angular-resource/socket-io && ng build @angular-resource/websocket",
+    "build": "ng build @angular-resource/core && ng build @angular-resource/http && ng build @angular-resource/local-storage && ng build @angular-resource/socket-io && ng build @angular-resource/websocket && ng build @angular-resource/progress && ng build @angular-resource/pubsub",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadless"
   },

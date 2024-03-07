@@ -12,6 +12,12 @@
       "@angular-resource/local-storage": [
         "dist/angular-resource/local-storage"
       ],
+      "@angular-resource/progress": [
+        "dist/angular-resource/progress"
+      ],
+      "@angular-resource/pubsub": [
+        "dist/angular-resource/pubsub"
+      ],
       "@angular-resource/socket-io": [
         "dist/angular-resource/socket-io"
       ],

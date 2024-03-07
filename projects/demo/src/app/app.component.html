@@ -34,6 +34,17 @@
 
     <th>
       <fieldset>
+        <legend>Progress</legend>
+        <button (click)="generate()">Generate</button>
+        <div *ngIf="generationResult">
+          <div>Progress: {{generationProgress}}%</div>
+          <div>Result: {{generationResult}}</div>
+        </div>
+      </fieldset>
+    </th>
+
+    <th>
+      <fieldset>
         <legend>Local Storage</legend>
         <button (click)="loadFromLocalStorage()">Load</button>
         <button (click)="saveToLocalStorage()">Save</button>
@@ -64,7 +75,9 @@
     <th>
       <fieldset>
         <legend>Chat</legend>
+        <button (click)="connectChat()">Connect</button>
         <button (click)="sendMessage()">Send message</button>
+        <button (click)="disconnectChat()">Disconnect</button>
         <ul *ngIf="!isLoading && !isError">
           <li *ngFor="let message of messages">
             #{{message.id}} {{ message.text }}
@@ -72,6 +85,16 @@
         </ul>
         <div *ngIf="isLoading">Loading...</div>
         <div *ngIf="isError">Server error</div>
+      </fieldset>
+    </th>
+
+    <th>
+      <fieldset>
+        <legend>PupSub</legend>
+        <button (click)="sendPubSub()">Send</button>
+        <div *ngIf="pubsubResult">
+          <div>{{pubsubResult}}</div>
+        </div>
       </fieldset>
     </th>
   </tr>

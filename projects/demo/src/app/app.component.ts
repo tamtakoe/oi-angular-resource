@@ -4,6 +4,8 @@ import { UsersResource } from './_resources/users.resource';
 import { ReposResource } from './_resources/repos.resource';
 import { GithubApi } from './_resources/github-api';
 import { ChatResource } from './_resources/chat.resource';
+import { GenerationResource } from './_resources/generation.resource';
+import { PubSubResource } from './_resources/pubsub.resource';
 
 @Component({
   selector: 'app-root',
@@ -19,14 +21,19 @@ export class AppComponent {
   isError = false;
   counter = 0
   updatedAt = 0
+  generationResult = '';
+  generationProgress = 0
+  pubsubResult = ''
 
   constructor(
     private githubApi: GithubApi,
     private counterStore: CounterStore, 
     private usersResource: UsersResource, 
     private reposResource: ReposResource,
+    private generationResource: GenerationResource,
+    private pubsubResource: PubSubResource,
     private chatResource: ChatResource
-    ) {
+  ) {
 
     // Effects
     this.counterStore.action('increase', 'decrease')
@@ -88,8 +95,8 @@ export class AppComponent {
       this.isLoading = state.isLoading;
       this.isError = state.isError;
     });
-    this.chatResource.getMessages()
-    this.chatResource.connect()
+    // this.chatResource.getMessages()
+    // this.chatResource.connect()
   }
 
   // Redux
@@ -114,6 +121,24 @@ export class AppComponent {
     this.reposResource.query({userId}).then((repos: any[]) => {
       this.repos = repos;
     });
+  }
+
+  // Generation
+  generate() {
+    this.generationProgress = 0;
+    this.generationResult = 'PENDING...';
+
+    this.generationResource.action('generate:progress').subscribe((data: any) => {
+      console.log('Generation PROGRESS', data)
+      this.generationProgress = data.progress;
+    })
+    this.generationResource.generate().then((data: any) => {
+      console.log('Generation COMPLETE', data)
+      this.generationProgress = data.progress;
+      this.generationResult = data.result
+    }).catch((error: any) => {
+      console.log('Generation ERROR', error)
+    })
   }
 
   // Local storage
@@ -194,10 +219,27 @@ export class AppComponent {
     });
   }
 
+  // PubSub
+  sendPubSub() {
+    this.pubsubResource.requestWithNoConfirmation('request without confirmation')
+    this.pubsubResource.request(Math.round(Math.random() * 100)).then((data: any) => {
+      console.log('PubSub ANSWER', data);
+      this.pubsubResult = data
+    })
+  }
+
   // Chat
+  connectChat() {
+    this.chatResource.getMessages()
+    this.chatResource.connect()
+  }
   sendMessage() {
     this.chatResource.sendMessage({text: `Message ${(new Date()).toUTCString()}`}).then(d => {
       console.log(`Message was sended by Socket.IO`, d);
     });
+  }
+
+  disconnectChat() {
+    this.chatResource.disconnect()
   }
 }

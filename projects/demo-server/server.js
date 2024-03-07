@@ -123,6 +123,30 @@ app.get('/messages', (req, res) => {
   res.send(messagesDB.messages);
 })
 
+let startTime = 0;
+
+app.post('/generation', (req, res) => {
+  console.log('Start generation');
+  startTime = Date.now();
+  res.send({ id: '<ID>' });
+})
+
+app.get('/generation/:processId', (req, res) => {
+  console.log('Send status of generation')
+  const maxDuration = 20000;
+  const duration =  Date.now() - startTime;
+  if (startTime === 0) {
+    res.send({ status: 'error', progress: 100, result: null, id: req.params.processId });
+  }
+
+  if (duration < maxDuration) {
+    res.send({ status: 'pending', progress: Math.round((duration / maxDuration) * 100), result: null, id: req.params.processId });
+  } else {
+    startTime = 0;
+    res.send({ status: 'success', progress: 100, result: 'OK', id: req.params.processId });
+  }
+})
+
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });
