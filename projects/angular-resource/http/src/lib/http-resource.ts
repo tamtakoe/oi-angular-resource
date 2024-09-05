@@ -1,10 +1,14 @@
 import { Type } from '@angular/core';
 import { XhrFactory } from '@angular/common';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpResponseBase, HttpXhrBackend, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpErrorResponse, HttpXhrBackend } from '@angular/common/http';
 import { UrlTemplate } from './url-template';
 import { RequestCacheWithMap } from './request-cache';
 import { Observable, of, throwError, NEVER, Subject} from 'rxjs';
 import { map, tap, filter, catchError, takeUntil } from 'rxjs/operators';
+import { XMLHttpRequest as xmlhttpreq } from 'xhr2'; // 'w3c-xmlhttprequest' 'xmlhttprequest-ts'
+
+declare var global: any;
+declare var window: any;
 
 function cleanObj(obj: any) {
   for (const key in obj) {
@@ -30,11 +34,23 @@ function reqToRes(req: any, res: any) {
 }
 
 // Without Injector
-// import { HttpXhrBackend, XhrFactory } from '@angular/common/http';
 class BrowserXhr implements XhrFactory {
   constructor() {}
   build(): any {
-    return (new XMLHttpRequest()) as any;
+    let XmlHttpRequest: any 
+
+    if (typeof XMLHttpRequest !== 'undefined') {
+      XmlHttpRequest = XMLHttpRequest
+
+    } else if (typeof window !== 'undefined' && window.XMLHttpRequest) {
+      XmlHttpRequest = window.XMLHttpRequest
+
+    } else if (typeof global !== 'undefined' && global.XMLHttpRequest) {
+      XmlHttpRequest = global.XMLHttpRequest
+    } else {
+      XmlHttpRequest = xmlhttpreq
+    }
+    return (new XmlHttpRequest()) as any;
   }
 }
 const http = new HttpClient(new HttpXhrBackend(new BrowserXhr()));
@@ -207,7 +223,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
       return mockRequest ? mockRequest(req) : http.request(req)
         .pipe(
           takeUntil(cancelStream),
-          filter((event: any) => event instanceof HttpResponseBase),
+          filter((event: any) => event instanceof HttpResponse),
           tap((response: HttpResponse<any>) => httpConfig.cache && cache.put(httpRequest, response, httpConfig.cache))
         );
     };

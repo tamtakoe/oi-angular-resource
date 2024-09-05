@@ -1,6 +1,6 @@
 {
   "name": "@angular-resource/http",
-  "version": "0.1.6",
+  "version": "0.1.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/tamtakoe/oi-angular-resource.git",
@@ -11,7 +11,8 @@
     "@angular/core": ">=2.0.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "xhr2": "^0.2.1"
   },
   "sideEffects": false
 }
