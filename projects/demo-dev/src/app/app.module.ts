@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { ChatResource } from './_resources/chat.resource';
 import { GenerationResource } from './_resources/generation.resource';
 import { PubSubResource } from './_resources/pubsub.resource';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
