@@ -8,9 +8,10 @@ import { GenerationResource } from './_resources/generation.resource';
 import { PubSubResource } from './_resources/pubsub.resource';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    standalone: false
 })
 export class AppComponent {
   title = 'Angular resource demo';
