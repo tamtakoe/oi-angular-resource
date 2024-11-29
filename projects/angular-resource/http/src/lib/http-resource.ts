@@ -125,7 +125,10 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
 
     let body = httpConfig.body;
 
-    if (!httpConfig.body && httpConfig.hasBody) {
+    if (httpConfig.body) {
+      httpConfig.hasBody = true;
+
+    } else if (httpConfig.hasBody) {
       body = params;
       params = null;
     }
@@ -188,7 +191,7 @@ const Request = (method: string, defaultHttpConfig: IHttpConfig = {}) => {
     this.actions.next({type: resourceMethodName + ':start', payload: body, error: null, meta: httpConfig});
 
     let mockRequest: any;
-    const httpRequest = body ? new HttpRequest(method, url, body, httpRequestInit) : new HttpRequest(method, url, httpRequestInit);
+    const httpRequest = httpConfig.hasBody ? new HttpRequest(method, url, body, httpRequestInit) : new HttpRequest(method, url, httpRequestInit);
 
     if (httpConfig.mock) {
       mockRequest = (req: any) => {

@@ -7,6 +7,12 @@ export const environment = {
       params: {},
       withCredentials: false   
     },
+    jsonplaceholder: {
+      host: 'https://jsonplaceholder.typicode.com',
+      headers: {},
+      params: {},
+      withCredentials: false   
+    },
     websocket: {
       url: 'ws://0.0.0.0:9000'
     },

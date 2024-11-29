@@ -1,25 +1,25 @@
-import { ReactiveResource, StateConfig } from '@angular-resource/core';
+import { ReactiveResource, StateConfig } from '../../../../angular-resource/core/src/public-api';
 import {
   HttpConfig,
   HttpMethod,
   Get, Post, Put, Patch, Delete, Options, Head, Jsonp
-} from '@angular-resource/http';
+} from '../../../../angular-resource/http/src/public-api';
 import {
   WebSocketConfig,
   Open, Close, Send
-} from '@angular-resource/websocket';
+} from '../../../../angular-resource/websocket/src/public-api';
 import {
   SocketIoConfig,
   CloseSocketIo,
   OpenSocketIo,
   SendSocketIo, SendSocketIoEvent,
-} from '@angular-resource/socket-io';
+} from '../../../../angular-resource/socket-io/src/public-api';
 import {
   LocalStorageConfig,
   LoadFromLocalStorage,
   SaveToLocalStorage,
   RemoveFromLocalStorage
-} from '@angular-resource/local-storage';
+} from '../../../../angular-resource/local-storage/src/public-api';
 
 import { environment as config } from '../../environments/environment';
 import { Injectable } from '@angular/core';
@@ -36,10 +36,10 @@ import { Injectable } from '@angular/core';
 })
 @HttpConfig({
   noTrailingSlash: true,
-  host: config.resources.github.host,
-  headers: config.resources.github.headers,
-  params: config.resources.github.params,
-  withCredentials: config.resources.github.withCredentials,
+  host: config.resources.jsonplaceholder.host,
+  headers: config.resources.jsonplaceholder.headers,
+  params: config.resources.jsonplaceholder.params,
+  withCredentials: config.resources.jsonplaceholder.withCredentials,
   transformResponse(response, options) {
     let newResponse = response;
 
@@ -66,7 +66,7 @@ import { Injectable } from '@angular/core';
 @LocalStorageConfig({
   name: 'ls'
 })
-export class GithubApi extends ReactiveResource {
+export class ApiResource extends ReactiveResource {
   // Http methods
   // query: HttpMethod<{limit?: number}, [{id, type}]>   = Get({isArray: true});
   query   = Get({ isArray: true });
@@ -93,8 +93,8 @@ export class GithubApi extends ReactiveResource {
   removeFromLocalStorage = RemoveFromLocalStorage();
 }
 
-export * from '@angular-resource/core';
-export * from '@angular-resource/http';
-export * from '@angular-resource/local-storage';
-export * from '@angular-resource/websocket';
-export * from '@angular-resource/socket-io';
+export * from '../../../../angular-resource/core/src/public-api';
+export * from '../../../../angular-resource/http/src/public-api';
+export * from '../../../../angular-resource/local-storage/src/public-api';
+export * from '../../../../angular-resource/websocket/src/public-api';
+export * from '../../../../angular-resource/socket-io/src/public-api';

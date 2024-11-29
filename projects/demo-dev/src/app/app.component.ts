@@ -117,6 +117,13 @@ export class AppComponent {
     });
   }
 
+  createUser() {
+    this.usersResource.create().then((user: any) => {
+      this.users.push(user);
+      console.log('USER', user)
+    });
+  }
+
   showRepos(userId: any) {
     this.reposResource.query({userId}).then((repos: any[]) => {
       this.repos = repos;

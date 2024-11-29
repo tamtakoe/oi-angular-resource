@@ -36,10 +36,10 @@ import { Injectable } from '@angular/core';
 })
 @HttpConfig({
   noTrailingSlash: true,
-  host: config.resources.github.host,
-  headers: config.resources.github.headers,
-  params: config.resources.github.params,
-  withCredentials: config.resources.github.withCredentials,
+  host: config.resources.jsonplaceholder.host,
+  headers: config.resources.jsonplaceholder.headers,
+  params: config.resources.jsonplaceholder.params,
+  withCredentials: config.resources.jsonplaceholder.withCredentials,
   transformResponse(response, options) {
     let newResponse = response;
 
@@ -66,7 +66,7 @@ import { Injectable } from '@angular/core';
 @LocalStorageConfig({
   name: 'ls'
 })
-export class GithubApi extends ReactiveResource {
+export class ApiResource extends ReactiveResource {
   // Http methods
   // query: HttpMethod<{limit?: number}, [{id, type}]>   = Get({isArray: true});
   query   = Get({ isArray: true });

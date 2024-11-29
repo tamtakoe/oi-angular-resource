@@ -19,10 +19,11 @@
       <fieldset>
         <legend>HTTP</legend>
         <button (click)="loadUsers()">Load users</button>
+        <button (click)="createUser()">Create user</button>
       </fieldset>
       <ul>
         <li *ngFor="let user of users">
-          <a href="#" (click)="showRepos(user.id)">{{ user.login }}</a>
+          <a href="#" (click)="showRepos(user.id)">{{ user.id }} {{ user.name }}</a>
         </li>
       </ul>
       <ul>
